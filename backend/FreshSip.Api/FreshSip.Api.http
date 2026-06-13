@@ -1,0 +1,6 @@
+@FreshSip.Api_HostAddress = http://localhost:5199
+
+GET {{FreshSip.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
