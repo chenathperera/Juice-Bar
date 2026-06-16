@@ -1,32 +1,10 @@
-<div class="page">
-  <nav class="navbar">
-    <div class="brand">{{ title }}</div>
-    <div class="nav-links">
-      <a href="#home">Home</a>
-      <a href="#menu">Menu</a>
-      <a href="#about">About</a>
-    </div>
-  </nav>
+<nav class="navbar">
+  <a class="brand" routerLink="/">{{ title }}</a>
 
-  <main class="hero" id="home">
-    <div class="hero-text">
-      <p class="tagline">Fresh fruit. Bright flavors. Simple code.</p>
-      <h1>Welcome to {{ title }}</h1>
-      <p class="description">
-        This is the first step of our juice bar app. The homepage is built with
-        Angular and it talks to the ASP.NET Core Web API.
-      </p>
-      <a class="menu-button" href="#menu">View Menu</a>
-    </div>
+  <div class="nav-links">
+    <a routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+    <a routerLink="/juices" routerLinkActive="active-link">Juices</a>
+  </div>
+</nav>
 
-    <div class="status-card">
-      <h2>API Status</h2>
-      <p>{{ apiStatus }}</p>
-    </div>
-  </main>
-
-  <section class="menu-preview" id="menu">
-    <h2>Coming Soon</h2>
-    <p>Our juice menu will be added in the next steps.</p>
-  </section>
-</div>
+<router-outlet />

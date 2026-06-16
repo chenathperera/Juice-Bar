@@ -1,0 +1,41 @@
+<section class="juice-list-page">
+  <div class="page-header">
+    <p class="eyebrow">FreshSip Menu</p>
+    <h1>Available Juices</h1>
+    <p>These juices are loaded from the ASP.NET Core API.</p>
+  </div>
+
+  <p *ngIf="isLoading" class="message">Loading juices...</p>
+  <p *ngIf="errorMessage" class="message error">{{ errorMessage }}</p>
+
+  <div *ngIf="!isLoading && !errorMessage" class="juice-grid">
+    <article *ngFor="let juice of juices" class="juice-card">
+      <img
+        *ngIf="juice.imageUrl"
+        [src]="juice.imageUrl"
+        [alt]="juice.name"
+        class="juice-image"
+      />
+
+      <div class="juice-content">
+        <div class="juice-top-row">
+          <h2>{{ juice.name }}</h2>
+          <span class="price">${{ juice.price.toFixed(2) }}</span>
+        </div>
+
+        <p class="description">
+          {{ juice.description || 'No description available yet.' }}
+        </p>
+
+        <p class="category">Category: {{ juice.category }}</p>
+        <p class="availability" [class.unavailable]="!juice.isAvailable">
+          {{ juice.isAvailable ? 'Available now' : 'Currently unavailable' }}
+        </p>
+      </div>
+    </article>
+
+    <p *ngIf="juices.length === 0" class="message">
+      No juices were found in the database yet.
+    </p>
+  </div>
+</section>
