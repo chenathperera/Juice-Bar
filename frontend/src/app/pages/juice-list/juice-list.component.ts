@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { Juice } from '../../models/juice.model';
 import { JuiceService } from '../../services/juice.service';
 
 @Component({
   selector: 'app-juice-list',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './juice-list.component.html',
   styleUrl: './juice-list.component.css'
 })
