@@ -32,6 +32,17 @@
         <p class="availability" [class.unavailable]="!juice.isAvailable">
           {{ juice.isAvailable ? 'Available now' : 'Currently unavailable' }}
         </p>
+
+        <div class="card-actions">
+          <button
+            type="button"
+            class="delete-button"
+            (click)="deleteJuice(juice)"
+            [disabled]="deletingJuiceId === juice.id"
+          >
+            {{ deletingJuiceId === juice.id ? 'Deleting...' : 'Delete' }}
+          </button>
+        </div>
       </div>
     </article>
 
