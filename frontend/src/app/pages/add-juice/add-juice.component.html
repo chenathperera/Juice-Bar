@@ -6,6 +6,13 @@
   </div>
 
   <div class="form-card">
+    <div *ngIf="backendValidationErrors.length > 0" class="status-message error">
+      <p>Please fix the following validation errors:</p>
+      <ul>
+        <li *ngFor="let error of backendValidationErrors">{{ error }}</li>
+      </ul>
+    </div>
+
     <form #juiceForm="ngForm" (ngSubmit)="submitForm(juiceForm)" novalidate>
       <div class="form-group">
         <label for="name">Name</label>

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Juice } from '../../models/juice.model';
@@ -14,6 +15,7 @@ import { JuiceService } from '../../services/juice.service';
 export class AddJuiceComponent {
   isSaving = false;
   errorMessage = '';
+  backendValidationErrors: string[] = [];
 
   juiceFormData = {
     name: '',
@@ -36,6 +38,7 @@ export class AddJuiceComponent {
 
     this.isSaving = true;
     this.errorMessage = '';
+    this.backendValidationErrors = [];
 
     const newJuice: Juice = {
       id: 0,
@@ -51,10 +54,25 @@ export class AddJuiceComponent {
       next: () => {
         this.router.navigate(['/juices']);
       },
-      error: () => {
-        this.errorMessage = 'Unable to save the juice right now. Please try again.';
+      error: (error: HttpErrorResponse) => {
+        if (error.status === 400) {
+          this.backendValidationErrors = this.extractValidationErrors(error);
+        } else {
+          this.errorMessage = 'Unable to save the juice right now. Please try again.';
+        }
+
         this.isSaving = false;
       }
     });
+  }
+
+  private extractValidationErrors(error: HttpErrorResponse): string[] {
+    const errors = error.error?.errors;
+
+    if (!errors) {
+      return ['The server rejected the data. Please check the form and try again.'];
+    }
+
+    return Object.values(errors).flat() as string[];
   }
 }

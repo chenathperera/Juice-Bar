@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Juice } from '../../models/juice.model';
@@ -16,6 +17,7 @@ export class EditJuiceComponent implements OnInit {
   isLoading = true;
   isSaving = false;
   errorMessage = '';
+  backendValidationErrors: string[] = [];
 
   juiceFormData = {
     name: '',
@@ -53,6 +55,7 @@ export class EditJuiceComponent implements OnInit {
 
     this.isSaving = true;
     this.errorMessage = '';
+    this.backendValidationErrors = [];
 
     const updatedJuice: Juice = {
       id: this.juiceId,
@@ -68,8 +71,13 @@ export class EditJuiceComponent implements OnInit {
       next: () => {
         this.router.navigate(['/juices']);
       },
-      error: () => {
-        this.errorMessage = 'Unable to update the juice right now. Please try again.';
+      error: (error: HttpErrorResponse) => {
+        if (error.status === 400) {
+          this.backendValidationErrors = this.extractValidationErrors(error);
+        } else {
+          this.errorMessage = 'Unable to update the juice right now. Please try again.';
+        }
+
         this.isSaving = false;
       }
     });
@@ -77,6 +85,7 @@ export class EditJuiceComponent implements OnInit {
 
   private loadJuice(): void {
     this.errorMessage = '';
+    this.backendValidationErrors = [];
 
     this.juiceService.getJuiceById(this.juiceId).subscribe({
       next: (juice) => {
@@ -94,5 +103,15 @@ export class EditJuiceComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  private extractValidationErrors(error: HttpErrorResponse): string[] {
+    const errors = error.error?.errors;
+
+    if (!errors) {
+      return ['The server rejected the data. Please check the form and try again.'];
+    }
+
+    return Object.values(errors).flat() as string[];
   }
 }
