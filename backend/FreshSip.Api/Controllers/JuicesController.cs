@@ -1,8 +1,6 @@
-using FreshSip.Api.Data;
 using FreshSip.Api.DTOs;
-using FreshSip.Api.Models;
+using FreshSip.Api.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace FreshSip.Api.Controllers;
 
@@ -10,73 +8,50 @@ namespace FreshSip.Api.Controllers;
 [Route("api/[controller]")]
 public class JuicesController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IJuiceService _juiceService;
 
-    public JuicesController(ApplicationDbContext context)
+    public JuicesController(IJuiceService juiceService)
     {
-        _context = context;
+        _juiceService = juiceService;
     }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<JuiceDto>>> GetJuices()
     {
-        var juices = await _context.Juices
-            .Select(juice => MapToJuiceDto(juice))
-            .ToListAsync();
-
+        var juices = await _juiceService.GetAllAsync();
         return Ok(juices);
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<JuiceDto>> GetJuice(int id)
     {
-        var juice = await _context.Juices.FindAsync(id);
+        var juice = await _juiceService.GetByIdAsync(id);
 
         if (juice == null)
         {
             return NotFound();
         }
 
-        return Ok(MapToJuiceDto(juice));
+        return Ok(juice);
     }
 
     [HttpPost]
     public async Task<ActionResult<JuiceDto>> CreateJuice(CreateJuiceDto createJuiceDto)
     {
-        var juice = new Juice
-        {
-            Name = createJuiceDto.Name,
-            Description = createJuiceDto.Description,
-            Price = createJuiceDto.Price,
-            ImageUrl = createJuiceDto.ImageUrl,
-            Category = createJuiceDto.Category,
-            IsAvailable = createJuiceDto.IsAvailable
-        };
+        var createdJuice = await _juiceService.CreateAsync(createJuiceDto);
 
-        _context.Juices.Add(juice);
-        await _context.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(GetJuice), new { id = juice.Id }, MapToJuiceDto(juice));
+        return CreatedAtAction(nameof(GetJuice), new { id = createdJuice.Id }, createdJuice);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateJuice(int id, UpdateJuiceDto updateJuiceDto)
-    {        
-        var existingJuice = await _context.Juices.FindAsync(id);
+    {
+        var wasUpdated = await _juiceService.UpdateAsync(id, updateJuiceDto);
 
-        if (existingJuice == null)
+        if (!wasUpdated)
         {
             return NotFound();
         }
-
-        existingJuice.Name = updateJuiceDto.Name;
-        existingJuice.Description = updateJuiceDto.Description;
-        existingJuice.Price = updateJuiceDto.Price;
-        existingJuice.ImageUrl = updateJuiceDto.ImageUrl;
-        existingJuice.Category = updateJuiceDto.Category;
-        existingJuice.IsAvailable = updateJuiceDto.IsAvailable;
-
-        await _context.SaveChangesAsync();
 
         return NoContent();
     }
@@ -84,30 +59,13 @@ public class JuicesController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteJuice(int id)
     {
-        var juice = await _context.Juices.FindAsync(id);
+        var wasDeleted = await _juiceService.DeleteAsync(id);
 
-        if (juice == null)
+        if (!wasDeleted)
         {
             return NotFound();
         }
 
-        _context.Juices.Remove(juice);
-        await _context.SaveChangesAsync();
-
         return NoContent();
-    }
-
-    private static JuiceDto MapToJuiceDto(Juice juice)
-    {
-        return new JuiceDto
-        {
-            Id = juice.Id,
-            Name = juice.Name,
-            Description = juice.Description,
-            Price = juice.Price,
-            ImageUrl = juice.ImageUrl,
-            Category = juice.Category,
-            IsAvailable = juice.IsAvailable
-        };
     }
 }
