@@ -12,6 +12,8 @@ public class JuiceDto
 
     public string? ImageUrl { get; set; }
 
+    public int CategoryId { get; set; }
+
     public string Category { get; set; } = string.Empty;
 
     public bool IsAvailable { get; set; }

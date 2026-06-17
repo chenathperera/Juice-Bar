@@ -72,6 +72,25 @@
         />
       </div>
 
+      <div class="form-group">
+        <label for="categoryId">Category</label>
+        <select
+          id="categoryId"
+          name="categoryId"
+          [(ngModel)]="juiceFormData.categoryId"
+          #categoryId="ngModel"
+          required
+        >
+          <option [ngValue]="null">Select a category</option>
+          <option *ngFor="let category of categories" [ngValue]="category.id">
+            {{ category.name }}
+          </option>
+        </select>
+        <p *ngIf="categoryId.invalid && categoryId.touched" class="validation-message">
+          Category is required.
+        </p>
+      </div>
+
       <div class="checkbox-row">
         <input
           id="isAvailable"

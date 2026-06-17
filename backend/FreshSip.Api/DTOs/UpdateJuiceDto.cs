@@ -17,9 +17,8 @@ public class UpdateJuiceDto
     [MaxLength(500)]
     public string? ImageUrl { get; set; }
 
-    [Required]
-    [MaxLength(50)]
-    public string Category { get; set; } = string.Empty;
+    [Range(1, int.MaxValue)]
+    public int CategoryId { get; set; }
 
     public bool IsAvailable { get; set; }
 }

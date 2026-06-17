@@ -38,7 +38,8 @@ public class JuiceService : IJuiceService
 
     public async Task<JuiceDto> CreateAsync(CreateJuiceDto createJuiceDto)
     {
-        var category = await GetOrCreateCategoryAsync(createJuiceDto.Category);
+        var category = await _context.Categories.FindAsync(createJuiceDto.CategoryId)
+            ?? throw new InvalidOperationException("The selected category was not found.");
 
         var juice = new Juice
         {
@@ -67,7 +68,8 @@ public class JuiceService : IJuiceService
             return false;
         }
 
-        var category = await GetOrCreateCategoryAsync(updateJuiceDto.Category);
+        var category = await _context.Categories.FindAsync(updateJuiceDto.CategoryId)
+            ?? throw new InvalidOperationException("The selected category was not found.");
 
         existingJuice.Name = updateJuiceDto.Name;
         existingJuice.Description = updateJuiceDto.Description;
@@ -106,31 +108,9 @@ public class JuiceService : IJuiceService
             Description = juice.Description,
             Price = juice.Price,
             ImageUrl = juice.ImageUrl,
+            CategoryId = juice.CategoryId,
             Category = juice.Category.Name,
             IsAvailable = juice.IsAvailable
         };
-    }
-
-    private async Task<Category> GetOrCreateCategoryAsync(string categoryName)
-    {
-        var trimmedName = categoryName.Trim();
-
-        var existingCategory = await _context.Categories
-            .FirstOrDefaultAsync(category => category.Name == trimmedName);
-
-        if (existingCategory != null)
-        {
-            return existingCategory;
-        }
-
-        var newCategory = new Category
-        {
-            Name = trimmedName
-        };
-
-        _context.Categories.Add(newCategory);
-        await _context.SaveChangesAsync();
-
-        return newCategory;
     }
 }

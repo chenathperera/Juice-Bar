@@ -5,6 +5,8 @@
     <p>Create a juice and save it to the SQL database through the API.</p>
   </div>
 
+  <p *ngIf="isLoadingCategories" class="status-message loading-message">Loading categories...</p>
+
   <div class="form-card">
     <div *ngIf="backendValidationErrors.length > 0" class="status-message error">
       <p>Please fix the following validation errors:</p>
@@ -13,7 +15,7 @@
       </ul>
     </div>
 
-    <form #juiceForm="ngForm" (ngSubmit)="submitForm(juiceForm)" novalidate>
+    <form *ngIf="!isLoadingCategories" #juiceForm="ngForm" (ngSubmit)="submitForm(juiceForm)" novalidate>
       <div class="form-group">
         <label for="name">Name</label>
         <input
@@ -67,6 +69,25 @@
           type="text"
           [(ngModel)]="juiceFormData.imageUrl"
         />
+      </div>
+
+      <div class="form-group">
+        <label for="categoryId">Category</label>
+        <select
+          id="categoryId"
+          name="categoryId"
+          [(ngModel)]="juiceFormData.categoryId"
+          #categoryId="ngModel"
+          required
+        >
+          <option [ngValue]="null">Select a category</option>
+          <option *ngFor="let category of categories" [ngValue]="category.id">
+            {{ category.name }}
+          </option>
+        </select>
+        <p *ngIf="categoryId.invalid && categoryId.touched" class="validation-message">
+          Category is required.
+        </p>
       </div>
 
       <div class="checkbox-row">

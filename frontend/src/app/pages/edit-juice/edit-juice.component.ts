@@ -3,7 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Category } from '../../models/category.model';
 import { Juice } from '../../models/juice.model';
+import { CategoryService } from '../../services/category.service';
 import { JuiceService } from '../../services/juice.service';
 
 @Component({
@@ -14,6 +16,7 @@ import { JuiceService } from '../../services/juice.service';
 })
 export class EditJuiceComponent implements OnInit {
   juiceId = 0;
+  categories: Category[] = [];
   isLoading = true;
   isSaving = false;
   errorMessage = '';
@@ -24,10 +27,12 @@ export class EditJuiceComponent implements OnInit {
     description: '',
     price: null as number | null,
     imageUrl: '',
+    categoryId: null as number | null,
     isAvailable: true
   };
 
   constructor(
+    private categoryService: CategoryService,
     private route: ActivatedRoute,
     private router: Router,
     private juiceService: JuiceService
@@ -48,7 +53,7 @@ export class EditJuiceComponent implements OnInit {
   }
 
   submitForm(form: NgForm): void {
-    if (form.invalid || this.juiceFormData.price === null) {
+    if (form.invalid || this.juiceFormData.price === null || this.juiceFormData.categoryId === null) {
       form.control.markAllAsTouched();
       return;
     }
@@ -63,7 +68,8 @@ export class EditJuiceComponent implements OnInit {
       description: this.juiceFormData.description || null,
       price: this.juiceFormData.price,
       imageUrl: this.juiceFormData.imageUrl || null,
-      category: 'Fresh Juice',
+      categoryId: this.juiceFormData.categoryId,
+      category: '',
       isAvailable: this.juiceFormData.isAvailable
     };
 
@@ -87,19 +93,30 @@ export class EditJuiceComponent implements OnInit {
     this.errorMessage = '';
     this.backendValidationErrors = [];
 
-    this.juiceService.getJuiceById(this.juiceId).subscribe({
-      next: (juice) => {
-        this.juiceFormData = {
-          name: juice.name,
-          description: juice.description || '',
-          price: juice.price,
-          imageUrl: juice.imageUrl || '',
-          isAvailable: juice.isAvailable
-        };
-        this.isLoading = false;
+    this.categoryService.getCategories().subscribe({
+      next: (categories) => {
+        this.categories = categories;
+
+        this.juiceService.getJuiceById(this.juiceId).subscribe({
+          next: (juice) => {
+            this.juiceFormData = {
+              name: juice.name,
+              description: juice.description || '',
+              price: juice.price,
+              imageUrl: juice.imageUrl || '',
+              categoryId: juice.categoryId,
+              isAvailable: juice.isAvailable
+            };
+            this.isLoading = false;
+          },
+          error: () => {
+            this.errorMessage = 'Unable to load the juice details right now. Please try again.';
+            this.isLoading = false;
+          }
+        });
       },
       error: () => {
-        this.errorMessage = 'Unable to load the juice details right now. Please try again.';
+        this.errorMessage = 'Unable to load categories right now. Please try again.';
         this.isLoading = false;
       }
     });
