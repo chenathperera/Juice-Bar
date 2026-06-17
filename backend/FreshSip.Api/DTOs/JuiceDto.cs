@@ -1,6 +1,6 @@
-namespace FreshSip.Api.Models;
+namespace FreshSip.Api.DTOs;
 
-public class Juice
+public class JuiceDto
 {
     public int Id { get; set; }
 
