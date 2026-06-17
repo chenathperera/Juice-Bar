@@ -13,7 +13,7 @@ public class Juice
     [MaxLength(500)]
     public string? Description { get; set; }
 
-    [Range(0, 9999.99)]
+    [Range(0.01, 9999.99)]
     public decimal Price { get; set; }
 
     [MaxLength(500)]
