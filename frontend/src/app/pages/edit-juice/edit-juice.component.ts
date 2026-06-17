@@ -69,7 +69,7 @@ export class EditJuiceComponent implements OnInit {
       price: this.juiceFormData.price,
       imageUrl: this.juiceFormData.imageUrl || null,
       categoryId: this.juiceFormData.categoryId,
-      category: '',
+      categoryName: '',
       isAvailable: this.juiceFormData.isAvailable
     };
 

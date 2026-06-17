@@ -14,7 +14,7 @@ public class JuiceDto
 
     public int CategoryId { get; set; }
 
-    public string Category { get; set; } = string.Empty;
+    public string CategoryName { get; set; } = string.Empty;
 
     public bool IsAvailable { get; set; }
 }

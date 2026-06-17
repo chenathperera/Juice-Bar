@@ -5,6 +5,6 @@ export interface Juice {
   price: number;
   imageUrl?: string | null;
   categoryId: number;
-  category: string;
+  categoryName: string;
   isAvailable: boolean;
 }

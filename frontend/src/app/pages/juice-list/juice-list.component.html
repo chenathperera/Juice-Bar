@@ -28,7 +28,7 @@
           {{ juice.description || 'No description available yet.' }}
         </p>
 
-        <p class="category">Category: {{ juice.category }}</p>
+        <p class="category">Category: {{ juice.categoryName }}</p>
         <p class="availability" [class.unavailable]="!juice.isAvailable">
           {{ juice.isAvailable ? 'Available now' : 'Currently unavailable' }}
         </p>

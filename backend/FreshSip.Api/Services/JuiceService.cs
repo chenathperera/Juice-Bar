@@ -109,7 +109,7 @@ public class JuiceService : IJuiceService
             Price = juice.Price,
             ImageUrl = juice.ImageUrl,
             CategoryId = juice.CategoryId,
-            Category = juice.Category.Name,
+            CategoryName = juice.Category.Name,
             IsAvailable = juice.IsAvailable
         };
     }

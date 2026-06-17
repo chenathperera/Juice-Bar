@@ -55,7 +55,7 @@ export class AddJuiceComponent {
       price: this.juiceFormData.price,
       imageUrl: this.juiceFormData.imageUrl || null,
       categoryId: this.juiceFormData.categoryId,
-      category: '',
+      categoryName: '',
       isAvailable: this.juiceFormData.isAvailable
     };
 
