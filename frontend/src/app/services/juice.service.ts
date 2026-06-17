@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Juice } from '../models/juice.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class JuiceService {
-  // Angular sends /api requests through the proxy to the ASP.NET backend.
-  private readonly apiUrl = '/api/juices';
+  private readonly apiUrl = `${environment.apiUrl}/juices`;
 
   constructor(private http: HttpClient) {}
 
