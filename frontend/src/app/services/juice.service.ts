@@ -1,8 +1,14 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Juice } from '../models/juice.model';
 import { environment } from '../../environments/environment';
+
+export interface JuiceFilters {
+  search?: string;
+  categoryId?: number;
+  isAvailable?: boolean;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +18,22 @@ export class JuiceService {
 
   constructor(private http: HttpClient) {}
 
-  getJuices(): Observable<Juice[]> {
-    return this.http.get<Juice[]>(this.apiUrl);
+  getJuices(filters?: JuiceFilters): Observable<Juice[]> {
+    let params = new HttpParams();
+
+    if (filters?.search) {
+      params = params.set('search', filters.search);
+    }
+
+    if (filters?.categoryId !== undefined) {
+      params = params.set('categoryId', filters.categoryId);
+    }
+
+    if (filters?.isAvailable !== undefined) {
+      params = params.set('isAvailable', filters.isAvailable);
+    }
+
+    return this.http.get<Juice[]>(this.apiUrl, { params });
   }
 
   getJuiceById(id: number): Observable<Juice> {

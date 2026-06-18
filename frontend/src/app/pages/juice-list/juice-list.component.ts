@@ -4,7 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Category } from '../../models/category.model';
 import { Juice } from '../../models/juice.model';
-import { JuiceService } from '../../services/juice.service';
+import { CategoryService } from '../../services/category.service';
+import { JuiceFilters, JuiceService } from '../../services/juice.service';
 
 @Component({
   selector: 'app-juice-list',
@@ -14,54 +15,66 @@ import { JuiceService } from '../../services/juice.service';
 })
 export class JuiceListComponent implements OnInit {
   juices: Juice[] = [];
+  categories: Category[] = [];
   searchTerm = '';
   selectedCategoryId = 'all';
   availabilityFilter = 'all';
   isLoading = true;
+  isLoadingCategories = true;
   errorMessage = '';
   deletingJuiceId: number | null = null;
 
-  constructor(private juiceService: JuiceService) {}
+  constructor(
+    private categoryService: CategoryService,
+    private juiceService: JuiceService
+  ) {}
 
   ngOnInit(): void {
+    this.loadCategories();
     this.loadJuices();
   }
 
-  get categories(): Category[] {
-    const uniqueCategories = new Map<number, Category>();
-
-    for (const juice of this.juices) {
-      if (!uniqueCategories.has(juice.categoryId)) {
-        uniqueCategories.set(juice.categoryId, {
-          id: juice.categoryId,
-          name: juice.categoryName,
-          description: null
-        });
-      }
-    }
-
-    return Array.from(uniqueCategories.values()).sort((first, second) =>
-      first.name.localeCompare(second.name)
-    );
+  get hasActiveFilters(): boolean {
+    return this.searchTerm.trim() !== '' ||
+      this.selectedCategoryId !== 'all' ||
+      this.availabilityFilter !== 'all';
   }
 
-  get filteredJuices(): Juice[] {
-    return this.juices.filter((juice) => {
-      const matchesSearch = juice.name.toLowerCase().includes(this.searchTerm.toLowerCase().trim());
-      const matchesCategory =
-        this.selectedCategoryId === 'all' || juice.categoryId === Number(this.selectedCategoryId);
-      const matchesAvailability =
-        this.availabilityFilter === 'all' ||
-        (this.availabilityFilter === 'available' && juice.isAvailable) ||
-        (this.availabilityFilter === 'unavailable' && !juice.isAvailable);
-
-      return matchesSearch && matchesCategory && matchesAvailability;
+  private loadCategories(): void {
+    this.categoryService.getCategories().subscribe({
+      next: (categories) => {
+        this.categories = categories;
+        this.isLoadingCategories = false;
+      },
+      error: () => {
+        this.errorMessage = 'Unable to load categories right now. Please try again.';
+        this.isLoadingCategories = false;
+      }
     });
   }
 
   private loadJuices(): void {
     this.errorMessage = '';
-    this.juiceService.getJuices().subscribe({
+
+    const filters: JuiceFilters = {};
+
+    if (this.searchTerm.trim()) {
+      filters.search = this.searchTerm.trim();
+    }
+
+    if (this.selectedCategoryId !== 'all') {
+      filters.categoryId = Number(this.selectedCategoryId);
+    }
+
+    if (this.availabilityFilter === 'available') {
+      filters.isAvailable = true;
+    } else if (this.availabilityFilter === 'unavailable') {
+      filters.isAvailable = false;
+    }
+
+    this.isLoading = true;
+
+    this.juiceService.getJuices(filters).subscribe({
       next: (juices) => {
         this.juices = juices;
         this.isLoading = false;
@@ -73,10 +86,15 @@ export class JuiceListComponent implements OnInit {
     });
   }
 
+  applyFilters(): void {
+    this.loadJuices();
+  }
+
   clearFilters(): void {
     this.searchTerm = '';
     this.selectedCategoryId = 'all';
     this.availabilityFilter = 'all';
+    this.loadJuices();
   }
 
   deleteJuice(juice: Juice): void {

@@ -14,10 +14,28 @@ public class JuiceService : IJuiceService
         _context = context;
     }
 
-    public async Task<IEnumerable<JuiceDto>> GetAllAsync()
+    public async Task<IEnumerable<JuiceDto>> GetAllAsync(string? search, int? categoryId, bool? isAvailable)
     {
-        return await _context.Juices
-            .Include(juice => juice.Category)
+        IQueryable<Juice> query = _context.Juices
+            .Include(juice => juice.Category);
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var trimmedSearch = search.Trim();
+            query = query.Where(juice => juice.Name.Contains(trimmedSearch));
+        }
+
+        if (categoryId.HasValue)
+        {
+            query = query.Where(juice => juice.CategoryId == categoryId.Value);
+        }
+
+        if (isAvailable.HasValue)
+        {
+            query = query.Where(juice => juice.IsAvailable == isAvailable.Value);
+        }
+
+        return await query
             .Select(juice => MapToJuiceDto(juice))
             .ToListAsync();
     }
