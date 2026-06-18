@@ -2,9 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Juice } from '../../models/juice.model';
-import { CreateOrder } from '../../models/order.model';
+import { CreateOrder, Order } from '../../models/order.model';
 import { JuiceService } from '../../services/juice.service';
 import { OrderService } from '../../services/order.service';
+import { RouterLink } from '@angular/router';
 
 interface CartItem {
   juiceId: number;
@@ -15,13 +16,14 @@ interface CartItem {
 
 @Component({
   selector: 'app-menu',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.css'
 })
 export class MenuComponent implements OnInit {
   juices: Juice[] = [];
   cartItems: CartItem[] = [];
+  placedOrder: Order | null = null;
   customerName = '';
   customerPhone = '';
   isLoading = true;
@@ -65,6 +67,7 @@ export class MenuComponent implements OnInit {
 
   addToCart(juice: Juice): void {
     this.successMessage = '';
+    this.placedOrder = null;
 
     const existingItem = this.cartItems.find((item) => item.juiceId === juice.id);
 
@@ -114,6 +117,7 @@ export class MenuComponent implements OnInit {
     this.isPlacingOrder = true;
     this.errorMessage = '';
     this.successMessage = '';
+    this.placedOrder = null;
 
     const order: CreateOrder = {
       customerName: this.customerName.trim(),
@@ -126,8 +130,9 @@ export class MenuComponent implements OnInit {
     };
 
     this.orderService.createOrder(order).subscribe({
-      next: () => {
+      next: (createdOrder) => {
         this.successMessage = 'Your order was placed successfully.';
+        this.placedOrder = createdOrder;
         this.cartItems = [];
         this.customerName = '';
         this.customerPhone = '';

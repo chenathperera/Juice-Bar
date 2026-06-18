@@ -9,6 +9,14 @@
   <p *ngIf="errorMessage" class="message error">{{ errorMessage }}</p>
   <p *ngIf="successMessage" class="message success">{{ successMessage }}</p>
 
+  <div *ngIf="placedOrder" class="confirmation-card">
+    <h2>Order Confirmation</h2>
+    <p class="confirmation-detail"><strong>Order id:</strong> {{ placedOrder.id }}</p>
+    <p class="confirmation-detail"><strong>Order status:</strong> {{ placedOrder.status }}</p>
+    <p class="confirmation-detail"><strong>Total amount:</strong> ${{ placedOrder.totalAmount.toFixed(2) }}</p>
+    <a class="track-link" routerLink="/track-order">Track Order</a>
+  </div>
+
   <div *ngIf="!isLoading" class="menu-layout">
     <div class="menu-grid">
       <article *ngFor="let juice of juices" class="menu-card">

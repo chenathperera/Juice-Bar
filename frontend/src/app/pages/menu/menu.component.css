@@ -46,6 +46,36 @@
   color: #15803d;
 }
 
+.confirmation-card {
+  max-width: 1200px;
+  margin: 0 auto 1.5rem;
+  padding: 1.5rem;
+  border-radius: 1.25rem;
+  background-color: #ffffff;
+  box-shadow: 0 18px 40px rgba(154, 52, 18, 0.12);
+}
+
+.confirmation-card h2 {
+  margin: 0 0 0.75rem;
+  color: #1f2937;
+}
+
+.confirmation-detail {
+  margin: 0.5rem 0 0;
+  color: #4b5563;
+}
+
+.track-link {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.85rem 1.4rem;
+  border-radius: 999px;
+  background-color: #ea580c;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 700;
+}
+
 .menu-layout {
   max-width: 1200px;
   margin: 0 auto;
