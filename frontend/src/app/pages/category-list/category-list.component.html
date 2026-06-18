@@ -3,7 +3,7 @@
     <p class="eyebrow">FreshSip Categories</p>
     <h1>Category Management</h1>
     <p>These categories are loaded from the ASP.NET Core API.</p>
-    <a class="add-link" routerLink="/categories/add">Add New Category</a>
+    <a class="add-link" routerLink="/admin/categories/add">Add New Category</a>
   </div>
 
   <p *ngIf="isLoading" class="message">Loading categories...</p>
@@ -18,7 +18,7 @@
         </p>
 
         <div class="card-actions">
-          <a class="edit-link" [routerLink]="['/categories/edit', category.id]">Edit</a>
+          <a class="edit-link" [routerLink]="['/admin/categories/edit', category.id]">Edit</a>
           <button
             type="button"
             class="delete-button"

@@ -61,7 +61,7 @@ export class AddJuiceComponent {
 
     this.juiceService.createJuice(newJuice).subscribe({
       next: () => {
-        this.router.navigate(['/juices']);
+        this.router.navigate(['/admin/juices']);
       },
       error: (error: HttpErrorResponse) => {
         if (error.status === 400) {

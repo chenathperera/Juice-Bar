@@ -42,7 +42,7 @@ export class AddCategoryComponent {
 
     this.categoryService.createCategory(newCategory).subscribe({
       next: () => {
-        this.router.navigate(['/categories']);
+        this.router.navigate(['/admin/categories']);
       },
       error: () => {
         this.errorMessage = 'Unable to save the category right now. Please try again.';

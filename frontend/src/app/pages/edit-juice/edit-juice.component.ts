@@ -75,7 +75,7 @@ export class EditJuiceComponent implements OnInit {
 
     this.juiceService.updateJuice(this.juiceId, updatedJuice).subscribe({
       next: () => {
-        this.router.navigate(['/juices']);
+        this.router.navigate(['/admin/juices']);
       },
       error: (error: HttpErrorResponse) => {
         if (error.status === 400) {

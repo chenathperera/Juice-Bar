@@ -12,11 +12,12 @@ import { MenuComponent } from './pages/menu/menu.component';
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'menu', component: MenuComponent },
-  { path: 'juices', component: JuiceListComponent },
-  { path: 'juices/add', component: AddJuiceComponent },
-  { path: 'juices/edit/:id', component: EditJuiceComponent },
-  { path: 'categories', component: CategoryListComponent },
-  { path: 'categories/add', component: AddCategoryComponent },
-  { path: 'categories/edit/:id', component: EditCategoryComponent },
-  { path: 'orders', component: OrderListComponent }
+  { path: 'admin/juices', component: JuiceListComponent },
+  { path: 'admin/juices/add', component: AddJuiceComponent },
+  { path: 'admin/juices/edit/:id', component: EditJuiceComponent },
+  { path: 'admin/categories', component: CategoryListComponent },
+  { path: 'admin/categories/add', component: AddCategoryComponent },
+  { path: 'admin/categories/edit/:id', component: EditCategoryComponent },
+  { path: 'admin/orders', component: OrderListComponent },
+  { path: 'admin/orders/:id', component: OrderListComponent }
 ];
