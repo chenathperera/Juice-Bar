@@ -31,6 +31,45 @@ export class AuthService {
     return localStorage.getItem(this.tokenStorageKey);
   }
 
+  getDecodedToken(): Record<string, unknown> | null {
+    const token = this.getToken();
+
+    if (!token) {
+      return null;
+    }
+
+    const tokenParts = token.split('.');
+
+    if (tokenParts.length !== 3) {
+      return null;
+    }
+
+    try {
+      const payload = tokenParts[1]
+        .replace(/-/g, '+')
+        .replace(/_/g, '/');
+
+      const paddedPayload = payload.padEnd(payload.length + (4 - payload.length % 4) % 4, '=');
+      const decodedPayload = atob(paddedPayload);
+
+      return JSON.parse(decodedPayload) as Record<string, unknown>;
+    } catch {
+      return null;
+    }
+  }
+
+  getUserRole(): string | null {
+    const decodedToken = this.getDecodedToken();
+
+    if (!decodedToken) {
+      return null;
+    }
+
+    const roleClaim = decodedToken['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+
+    return typeof roleClaim === 'string' ? roleClaim : null;
+  }
+
   logout(): void {
     localStorage.removeItem(this.tokenStorageKey);
     this.router.navigate(['/login']);
