@@ -17,4 +17,6 @@ public class Juice
     public Category Category { get; set; } = null!;
 
     public bool IsAvailable { get; set; }
+
+    public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 }
