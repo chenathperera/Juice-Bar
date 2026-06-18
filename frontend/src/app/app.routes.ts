@@ -9,9 +9,11 @@ import { CategoryListComponent } from './pages/category-list/category-list.compo
 import { OrderListComponent } from './pages/order-list/order-list.component';
 import { MenuComponent } from './pages/menu/menu.component';
 import { TrackOrderComponent } from './pages/track-order/track-order.component';
+import { LoginComponent } from './pages/login/login.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
+  { path: 'login', component: LoginComponent },
   { path: 'menu', component: MenuComponent },
   { path: 'track-order', component: TrackOrderComponent },
   { path: 'admin/juices', component: JuiceListComponent },

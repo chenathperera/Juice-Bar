@@ -1,0 +1,53 @@
+<section class="login-page">
+  <div class="page-header">
+    <p class="eyebrow">FreshSip Access</p>
+    <h1>Login</h1>
+    <p>Sign in to access the admin side of FreshSip.</p>
+  </div>
+
+  <div class="login-card">
+    <form #loginForm="ngForm" (ngSubmit)="submitForm(loginForm)" novalidate>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          [(ngModel)]="loginData.email"
+          #email="ngModel"
+          required
+          email
+        />
+        <p *ngIf="email.errors?.['required'] && email.touched" class="validation-message">
+          Email is required.
+        </p>
+        <p *ngIf="email.errors?.['email'] && email.touched" class="validation-message">
+          Enter a valid email address.
+        </p>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          [(ngModel)]="loginData.password"
+          #password="ngModel"
+          required
+        />
+        <p *ngIf="password.invalid && password.touched" class="validation-message">
+          Password is required.
+        </p>
+      </div>
+
+      <p *ngIf="isLoading" class="status-message">Logging in...</p>
+      <p *ngIf="errorMessage" class="status-message error">{{ errorMessage }}</p>
+
+      <div class="button-row">
+        <button type="submit" [disabled]="isLoading">Login</button>
+        <a routerLink="/" class="secondary-link">Back Home</a>
+      </div>
+    </form>
+  </div>
+</section>
