@@ -8,10 +8,12 @@ import { JuiceListComponent } from './pages/juice-list/juice-list.component';
 import { CategoryListComponent } from './pages/category-list/category-list.component';
 import { OrderListComponent } from './pages/order-list/order-list.component';
 import { MenuComponent } from './pages/menu/menu.component';
+import { TrackOrderComponent } from './pages/track-order/track-order.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'menu', component: MenuComponent },
+  { path: 'track-order', component: TrackOrderComponent },
   { path: 'admin/juices', component: JuiceListComponent },
   { path: 'admin/juices/add', component: AddJuiceComponent },
   { path: 'admin/juices/edit/:id', component: EditJuiceComponent },
