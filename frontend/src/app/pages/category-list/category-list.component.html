@@ -1,0 +1,37 @@
+<section class="category-list-page">
+  <div class="page-header">
+    <p class="eyebrow">FreshSip Categories</p>
+    <h1>Category Management</h1>
+    <p>These categories are loaded from the ASP.NET Core API.</p>
+    <a class="add-link" routerLink="/categories/add">Add New Category</a>
+  </div>
+
+  <p *ngIf="isLoading" class="message">Loading categories...</p>
+  <p *ngIf="errorMessage" class="message error">{{ errorMessage }}</p>
+
+  <div *ngIf="!isLoading && !errorMessage" class="category-grid">
+    <article *ngFor="let category of categories" class="category-card">
+      <div class="category-content">
+        <h2>{{ category.name }}</h2>
+        <p class="description">
+          {{ category.description || 'No description available yet.' }}
+        </p>
+
+        <div class="card-actions">
+          <button
+            type="button"
+            class="delete-button"
+            (click)="deleteCategory(category)"
+            [disabled]="deletingCategoryId === category.id"
+          >
+            {{ deletingCategoryId === category.id ? 'Deleting...' : 'Delete' }}
+          </button>
+        </div>
+      </div>
+    </article>
+
+    <p *ngIf="categories.length === 0" class="message">
+      No categories were found in the database yet.
+    </p>
+  </div>
+</section>

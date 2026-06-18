@@ -1,0 +1,44 @@
+<section class="add-category-page">
+  <div class="page-header">
+    <p class="eyebrow">FreshSip Categories</p>
+    <h1>Add a New Category</h1>
+    <p>Create a category and save it through the API.</p>
+  </div>
+
+  <div class="form-card">
+    <form #categoryForm="ngForm" (ngSubmit)="submitForm(categoryForm)" novalidate>
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input
+          id="name"
+          name="name"
+          type="text"
+          [(ngModel)]="categoryFormData.name"
+          #name="ngModel"
+          required
+        />
+        <p *ngIf="name.invalid && name.touched" class="validation-message">
+          Name is required.
+        </p>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea
+          id="description"
+          name="description"
+          rows="4"
+          [(ngModel)]="categoryFormData.description"
+        ></textarea>
+      </div>
+
+      <p *ngIf="isSaving" class="status-message">Saving category...</p>
+      <p *ngIf="errorMessage" class="status-message error">{{ errorMessage }}</p>
+
+      <div class="button-row">
+        <button type="submit" [disabled]="isSaving">Save Category</button>
+        <a routerLink="/categories" class="secondary-link">Back to Categories</a>
+      </div>
+    </form>
+  </div>
+</section>
