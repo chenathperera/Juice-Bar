@@ -18,6 +18,10 @@ export class AppComponent {
     return this.authService.isLoggedIn();
   }
 
+  get isAdmin(): boolean {
+    return this.authService.getUserRole() === 'Admin';
+  }
+
   logout(): void {
     this.authService.logout();
   }

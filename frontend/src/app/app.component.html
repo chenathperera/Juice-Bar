@@ -7,9 +7,9 @@
     <button *ngIf="isLoggedIn" type="button" class="logout-button" (click)="logout()">Logout</button>
     <a routerLink="/menu" routerLinkActive="active-link">Menu</a>
     <a routerLink="/track-order" routerLinkActive="active-link">Track Order</a>
-    <a routerLink="/admin/juices" routerLinkActive="active-link">Admin Juices</a>
-    <a routerLink="/admin/categories" routerLinkActive="active-link">Admin Categories</a>
-    <a routerLink="/admin/orders" routerLinkActive="active-link">Admin Orders</a>
+    <a *ngIf="isAdmin" routerLink="/admin/juices" routerLinkActive="active-link">Admin Juices</a>
+    <a *ngIf="isAdmin" routerLink="/admin/categories" routerLinkActive="active-link">Admin Categories</a>
+    <a *ngIf="isAdmin" routerLink="/admin/orders" routerLinkActive="active-link">Admin Orders</a>
   </div>
 </nav>
 
