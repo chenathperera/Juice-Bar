@@ -32,6 +32,16 @@
   font-weight: 600;
 }
 
+.logout-button {
+  border: 0;
+  background: none;
+  color: #374151;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
 .nav-links a.active-link {
   color: #ea580c;
 }

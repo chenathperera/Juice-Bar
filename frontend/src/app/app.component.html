@@ -3,7 +3,8 @@
 
   <div class="nav-links">
     <a routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">Home</a>
-    <a routerLink="/login" routerLinkActive="active-link">Login</a>
+    <a *ngIf="!isLoggedIn" routerLink="/login" routerLinkActive="active-link">Login</a>
+    <button *ngIf="isLoggedIn" type="button" class="logout-button" (click)="logout()">Logout</button>
     <a routerLink="/menu" routerLinkActive="active-link">Menu</a>
     <a routerLink="/track-order" routerLinkActive="active-link">Track Order</a>
     <a routerLink="/admin/juices" routerLinkActive="active-link">Admin Juices</a>
