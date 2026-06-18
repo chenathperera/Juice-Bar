@@ -70,12 +70,41 @@ export class AuthService {
     return typeof roleClaim === 'string' ? roleClaim : null;
   }
 
+  isTokenExpired(): boolean {
+    const decodedToken = this.getDecodedToken();
+
+    if (!decodedToken) {
+      return true;
+    }
+
+    const expClaim = decodedToken['exp'];
+
+    if (typeof expClaim !== 'number') {
+      return true;
+    }
+
+    const expirationTime = expClaim * 1000;
+
+    return Date.now() >= expirationTime;
+  }
+
   logout(): void {
     localStorage.removeItem(this.tokenStorageKey);
     this.router.navigate(['/login']);
   }
 
   isLoggedIn(): boolean {
-    return this.getToken() !== null;
+    const token = this.getToken();
+
+    if (!token) {
+      return false;
+    }
+
+    if (this.isTokenExpired()) {
+      localStorage.removeItem(this.tokenStorageKey);
+      return false;
+    }
+
+    return true;
   }
 }
