@@ -23,4 +23,8 @@ export class OrderService {
   createOrder(order: CreateOrder): Observable<Order> {
     return this.http.post<Order>(this.apiUrl, order);
   }
+
+  updateOrderStatus(id: number, status: string): Observable<Order> {
+    return this.http.patch<Order>(`${this.apiUrl}/${id}/status`, { status });
+  }
 }

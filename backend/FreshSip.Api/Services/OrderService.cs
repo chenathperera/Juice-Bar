@@ -7,6 +7,15 @@ namespace FreshSip.Api.Services;
 
 public class OrderService : IOrderService
 {
+    private static readonly Dictionary<string, string> AllowedStatuses = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["Pending"] = "Pending",
+        ["Preparing"] = "Preparing",
+        ["Ready"] = "Ready",
+        ["Completed"] = "Completed",
+        ["Cancelled"] = "Cancelled"
+    };
+
     private readonly ApplicationDbContext _context;
 
     public OrderService(ApplicationDbContext context)
@@ -91,6 +100,34 @@ public class OrderService : IOrderService
             .FirstAsync(savedOrder => savedOrder.Id == order.Id);
 
         return MapToOrderDto(createdOrder);
+    }
+
+    public async Task<OrderDto?> UpdateStatusAsync(int id, UpdateOrderStatusDto updateOrderStatusDto)
+    {
+        if (!TryGetValidStatus(updateOrderStatusDto.Status, out var validStatus))
+        {
+            throw new ArgumentException("Status must be Pending, Preparing, Ready, Completed, or Cancelled.");
+        }
+
+        var order = await _context.Orders
+            .Include(existingOrder => existingOrder.OrderItems)
+            .ThenInclude(existingOrderItem => existingOrderItem.Juice)
+            .FirstOrDefaultAsync(existingOrder => existingOrder.Id == id);
+
+        if (order == null)
+        {
+            return null;
+        }
+
+        order.Status = validStatus;
+        await _context.SaveChangesAsync();
+
+        return MapToOrderDto(order);
+    }
+
+    private static bool TryGetValidStatus(string status, out string validStatus)
+    {
+        return AllowedStatuses.TryGetValue(status.Trim(), out validStatus!);
     }
 
     private static OrderDto MapToOrderDto(Order order)

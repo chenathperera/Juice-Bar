@@ -49,4 +49,24 @@ public class OrdersController : ControllerBase
             return BadRequest(new { message = exception.Message });
         }
     }
+
+    [HttpPatch("{id}/status")]
+    public async Task<ActionResult<OrderDto>> UpdateOrderStatus(int id, UpdateOrderStatusDto updateOrderStatusDto)
+    {
+        try
+        {
+            var updatedOrder = await _orderService.UpdateStatusAsync(id, updateOrderStatusDto);
+
+            if (updatedOrder == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(updatedOrder);
+        }
+        catch (ArgumentException exception)
+        {
+            return BadRequest(new { message = exception.Message });
+        }
+    }
 }

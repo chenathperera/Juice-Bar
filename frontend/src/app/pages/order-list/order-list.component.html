@@ -17,6 +17,20 @@
 
       <p class="detail"><strong>Customer details:</strong> {{ order.customerName }} | {{ order.customerPhone }}</p>
       <p class="detail"><strong>Order status:</strong> {{ order.status }}</p>
+      <div class="status-row">
+        <label [for]="'status-' + order.id" class="status-label">Update status</label>
+        <select
+          [id]="'status-' + order.id"
+          [ngModel]="order.status"
+          (ngModelChange)="updateOrderStatus(order, $event)"
+          [disabled]="updatingOrderId === order.id"
+          class="status-select"
+        >
+          <option *ngFor="let status of orderStatuses" [value]="status">
+            {{ status }}
+          </option>
+        </select>
+      </div>
       <p class="detail"><strong>Order date:</strong> {{ order.orderDate | date: 'medium' }}</p>
       <p class="detail"><strong>Total Amount:</strong> ${{ order.totalAmount.toFixed(2) }}</p>
       <p class="detail"><strong>Juices ordered:</strong> {{ order.items.length }}</p>
