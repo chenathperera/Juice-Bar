@@ -9,8 +9,46 @@
   <p *ngIf="isLoading" class="message">Loading juices...</p>
   <p *ngIf="errorMessage" class="message error">{{ errorMessage }}</p>
 
+  <div *ngIf="!isLoading && !errorMessage" class="filters-card">
+    <div class="filters-grid">
+      <div class="filter-group">
+        <label for="searchTerm">Search by name</label>
+        <input
+          id="searchTerm"
+          name="searchTerm"
+          type="text"
+          [(ngModel)]="searchTerm"
+          placeholder="Search juices..."
+        />
+      </div>
+
+      <div class="filter-group">
+        <label for="categoryFilter">Filter by category</label>
+        <select id="categoryFilter" name="categoryFilter" [(ngModel)]="selectedCategoryId">
+          <option value="all">All Categories</option>
+          <option *ngFor="let category of categories" [value]="category.id">
+            {{ category.name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="availabilityFilter">Filter by availability</label>
+        <select id="availabilityFilter" name="availabilityFilter" [(ngModel)]="availabilityFilter">
+          <option value="all">All</option>
+          <option value="available">Available</option>
+          <option value="unavailable">Unavailable</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="filters-actions">
+      <button type="button" class="clear-button" (click)="clearFilters()">Clear Filters</button>
+    </div>
+  </div>
+
   <div *ngIf="!isLoading && !errorMessage" class="juice-grid">
-    <article *ngFor="let juice of juices" class="juice-card">
+    <article *ngFor="let juice of filteredJuices" class="juice-card">
       <img
         *ngIf="juice.imageUrl"
         [src]="juice.imageUrl"
@@ -49,6 +87,10 @@
 
     <p *ngIf="juices.length === 0" class="message">
       No juices were found in the database yet.
+    </p>
+
+    <p *ngIf="juices.length > 0 && filteredJuices.length === 0" class="message">
+      No juices match your current search and filter options.
     </p>
   </div>
 </section>
