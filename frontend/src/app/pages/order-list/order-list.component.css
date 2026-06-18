@@ -80,6 +80,36 @@
   color: #4b5563;
 }
 
+.items-section {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid #fed7aa;
+}
+
+.items-section h3 {
+  margin: 0 0 0.75rem;
+  color: #1f2937;
+}
+
+.item-card {
+  padding: 1rem;
+  border-radius: 1rem;
+  background-color: #fff7ed;
+}
+
+.item-card + .item-card {
+  margin-top: 0.75rem;
+}
+
+.item-detail {
+  margin: 0.4rem 0 0;
+  color: #4b5563;
+}
+
+.item-detail:first-child {
+  margin-top: 0;
+}
+
 @media (max-width: 768px) {
   .order-list-page {
     padding: 2rem 1rem 3rem;

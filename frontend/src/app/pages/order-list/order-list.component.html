@@ -15,11 +15,22 @@
         <span class="status-badge">{{ order.status }}</span>
       </div>
 
-      <p class="detail"><strong>Customer:</strong> {{ order.customerName }}</p>
-      <p class="detail"><strong>Phone:</strong> {{ order.customerPhone }}</p>
-      <p class="detail"><strong>Date:</strong> {{ order.orderDate | date: 'medium' }}</p>
+      <p class="detail"><strong>Customer details:</strong> {{ order.customerName }} | {{ order.customerPhone }}</p>
+      <p class="detail"><strong>Order status:</strong> {{ order.status }}</p>
+      <p class="detail"><strong>Order date:</strong> {{ order.orderDate | date: 'medium' }}</p>
       <p class="detail"><strong>Total Amount:</strong> ${{ order.totalAmount.toFixed(2) }}</p>
-      <p class="detail"><strong>Items:</strong> {{ order.items.length }}</p>
+      <p class="detail"><strong>Juices ordered:</strong> {{ order.items.length }}</p>
+
+      <div class="items-section">
+        <h3>Ordered Items</h3>
+
+        <div *ngFor="let item of order.items" class="item-card">
+          <p class="item-detail"><strong>Juice:</strong> {{ item.juiceName }}</p>
+          <p class="item-detail"><strong>Quantity:</strong> {{ item.quantity }}</p>
+          <p class="item-detail"><strong>Unit price:</strong> ${{ item.unitPrice.toFixed(2) }}</p>
+          <p class="item-detail"><strong>Subtotal:</strong> ${{ item.subtotal.toFixed(2) }}</p>
+        </div>
+      </div>
     </article>
 
     <p *ngIf="orders.length === 0" class="message">
