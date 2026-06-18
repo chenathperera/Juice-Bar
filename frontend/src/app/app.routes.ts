@@ -7,9 +7,11 @@ import { EditCategoryComponent } from './pages/edit-category/edit-category.compo
 import { JuiceListComponent } from './pages/juice-list/juice-list.component';
 import { CategoryListComponent } from './pages/category-list/category-list.component';
 import { OrderListComponent } from './pages/order-list/order-list.component';
+import { MenuComponent } from './pages/menu/menu.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
+  { path: 'menu', component: MenuComponent },
   { path: 'juices', component: JuiceListComponent },
   { path: 'juices/add', component: AddJuiceComponent },
   { path: 'juices/edit/:id', component: EditJuiceComponent },
