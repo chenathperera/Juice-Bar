@@ -1,0 +1,29 @@
+<section class="order-list-page">
+  <div class="page-header">
+    <p class="eyebrow">FreshSip Orders</p>
+    <h1>Order List</h1>
+    <p>These orders are loaded from the ASP.NET Core API.</p>
+  </div>
+
+  <p *ngIf="isLoading" class="message">Loading orders...</p>
+  <p *ngIf="errorMessage" class="message error">{{ errorMessage }}</p>
+
+  <div *ngIf="!isLoading && !errorMessage" class="order-grid">
+    <article *ngFor="let order of orders" class="order-card">
+      <div class="order-top-row">
+        <h2>Order #{{ order.id }}</h2>
+        <span class="status-badge">{{ order.status }}</span>
+      </div>
+
+      <p class="detail"><strong>Customer:</strong> {{ order.customerName }}</p>
+      <p class="detail"><strong>Phone:</strong> {{ order.customerPhone }}</p>
+      <p class="detail"><strong>Date:</strong> {{ order.orderDate | date: 'medium' }}</p>
+      <p class="detail"><strong>Total Amount:</strong> ${{ order.totalAmount.toFixed(2) }}</p>
+      <p class="detail"><strong>Items:</strong> {{ order.items.length }}</p>
+    </article>
+
+    <p *ngIf="orders.length === 0" class="message">
+      No orders were found in the database yet.
+    </p>
+  </div>
+</section>
