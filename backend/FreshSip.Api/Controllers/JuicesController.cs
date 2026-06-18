@@ -20,10 +20,19 @@ public class JuicesController : ControllerBase
         [FromQuery] string? search,
         [FromQuery] int? categoryId,
         [FromQuery] bool? isAvailable,
+        [FromQuery] string? sortBy,
+        [FromQuery] string? sortDirection,
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 5)
     {
-        var juices = await _juiceService.GetAllAsync(search, categoryId, isAvailable, pageNumber, pageSize);
+        var juices = await _juiceService.GetAllAsync(
+            search,
+            categoryId,
+            isAvailable,
+            sortBy,
+            sortDirection,
+            pageNumber,
+            pageSize);
         return Ok(juices);
     }
 

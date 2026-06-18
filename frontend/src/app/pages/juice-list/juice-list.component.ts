@@ -19,6 +19,8 @@ export class JuiceListComponent implements OnInit {
   searchTerm = '';
   selectedCategoryId = 'all';
   availabilityFilter = 'all';
+  sortBy = 'name';
+  sortDirection = 'asc';
   pageNumber = 1;
   pageSize = 5;
   totalCount = 0;
@@ -76,6 +78,8 @@ export class JuiceListComponent implements OnInit {
       filters.isAvailable = false;
     }
 
+    filters.sortBy = this.sortBy;
+    filters.sortDirection = this.sortDirection;
     filters.pageNumber = this.pageNumber;
     filters.pageSize = this.pageSize;
 
@@ -106,6 +110,13 @@ export class JuiceListComponent implements OnInit {
     this.searchTerm = '';
     this.selectedCategoryId = 'all';
     this.availabilityFilter = 'all';
+    this.sortBy = 'name';
+    this.sortDirection = 'asc';
+    this.pageNumber = 1;
+    this.loadJuices();
+  }
+
+  applySorting(): void {
     this.pageNumber = 1;
     this.loadJuices();
   }

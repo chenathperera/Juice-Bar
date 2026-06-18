@@ -8,6 +8,8 @@ public interface IJuiceService
         string? search,
         int? categoryId,
         bool? isAvailable,
+        string? sortBy,
+        string? sortDirection,
         int pageNumber,
         int pageSize);
 

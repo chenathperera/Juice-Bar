@@ -8,6 +8,8 @@ export interface JuiceFilters {
   search?: string;
   categoryId?: number;
   isAvailable?: boolean;
+  sortBy?: string;
+  sortDirection?: string;
   pageNumber?: number;
   pageSize?: number;
 }
@@ -41,6 +43,14 @@ export class JuiceService {
 
     if (filters?.isAvailable !== undefined) {
       params = params.set('isAvailable', filters.isAvailable);
+    }
+
+    if (filters?.sortBy) {
+      params = params.set('sortBy', filters.sortBy);
+    }
+
+    if (filters?.sortDirection) {
+      params = params.set('sortDirection', filters.sortDirection);
     }
 
     if (filters?.pageNumber !== undefined) {

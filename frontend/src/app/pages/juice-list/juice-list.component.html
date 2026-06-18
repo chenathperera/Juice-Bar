@@ -52,6 +52,34 @@
           <option value="unavailable">Unavailable</option>
         </select>
       </div>
+
+      <div class="filter-group">
+        <label for="sortBy">Sort by</label>
+        <select
+          id="sortBy"
+          name="sortBy"
+          [(ngModel)]="sortBy"
+          (ngModelChange)="applySorting()"
+        >
+          <option value="name">Name</option>
+          <option value="price">Price</option>
+          <option value="category">Category</option>
+          <option value="availability">Availability</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="sortDirection">Sort direction</label>
+        <select
+          id="sortDirection"
+          name="sortDirection"
+          [(ngModel)]="sortDirection"
+          (ngModelChange)="applySorting()"
+        >
+          <option value="asc">Ascending</option>
+          <option value="desc">Descending</option>
+        </select>
+      </div>
     </div>
 
     <div class="filters-actions">

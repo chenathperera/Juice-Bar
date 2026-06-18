@@ -18,6 +18,8 @@ public class JuiceService : IJuiceService
         string? search,
         int? categoryId,
         bool? isAvailable,
+        string? sortBy,
+        string? sortDirection,
         int pageNumber,
         int pageSize)
     {
@@ -43,11 +45,12 @@ public class JuiceService : IJuiceService
             query = query.Where(juice => juice.IsAvailable == isAvailable.Value);
         }
 
+        query = ApplySorting(query, sortBy, sortDirection);
+
         var totalCount = await query.CountAsync();
         var totalPages = totalCount == 0 ? 0 : (int)Math.Ceiling(totalCount / (double)pageSize);
 
         var items = await query
-            .OrderBy(juice => juice.Name)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .Select(juice => MapToJuiceDto(juice))
@@ -138,6 +141,29 @@ public class JuiceService : IJuiceService
         await _context.SaveChangesAsync();
 
         return true;
+    }
+
+    private static IQueryable<Juice> ApplySorting(IQueryable<Juice> query, string? sortBy, string? sortDirection)
+    {
+        var normalizedSortBy = sortBy?.Trim().ToLowerInvariant() ?? "name";
+        var normalizedSortDirection = sortDirection?.Trim().ToLowerInvariant() ?? "asc";
+        var isDescending = normalizedSortDirection == "desc";
+
+        return normalizedSortBy switch
+        {
+            "price" => isDescending
+                ? query.OrderByDescending(juice => juice.Price).ThenBy(juice => juice.Name)
+                : query.OrderBy(juice => juice.Price).ThenBy(juice => juice.Name),
+            "category" => isDescending
+                ? query.OrderByDescending(juice => juice.Category.Name).ThenBy(juice => juice.Name)
+                : query.OrderBy(juice => juice.Category.Name).ThenBy(juice => juice.Name),
+            "availability" => isDescending
+                ? query.OrderByDescending(juice => juice.IsAvailable).ThenBy(juice => juice.Name)
+                : query.OrderBy(juice => juice.IsAvailable).ThenBy(juice => juice.Name),
+            _ => isDescending
+                ? query.OrderByDescending(juice => juice.Name)
+                : query.OrderBy(juice => juice.Name)
+        };
     }
 
     private static JuiceDto MapToJuiceDto(Juice juice)
