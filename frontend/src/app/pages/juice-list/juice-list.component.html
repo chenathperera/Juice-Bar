@@ -101,4 +101,26 @@
       {{ hasActiveFilters ? 'No juices match your current search and filter options.' : 'No juices were found in the database yet.' }}
     </p>
   </div>
+
+  <div *ngIf="!isLoading && !errorMessage && totalPages > 0" class="pagination-card">
+    <button
+      type="button"
+      class="pagination-button"
+      (click)="goToPreviousPage()"
+      [disabled]="pageNumber === 1"
+    >
+      Previous
+    </button>
+
+    <p class="pagination-text">Page {{ pageNumber }} of {{ totalPages }}</p>
+
+    <button
+      type="button"
+      class="pagination-button"
+      (click)="goToNextPage()"
+      [disabled]="pageNumber === totalPages"
+    >
+      Next
+    </button>
+  </div>
 </section>

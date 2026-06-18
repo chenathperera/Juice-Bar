@@ -16,12 +16,14 @@ public class JuicesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<JuiceDto>>> GetJuices(
+    public async Task<ActionResult<PagedResultDto<JuiceDto>>> GetJuices(
         [FromQuery] string? search,
         [FromQuery] int? categoryId,
-        [FromQuery] bool? isAvailable)
+        [FromQuery] bool? isAvailable,
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 5)
     {
-        var juices = await _juiceService.GetAllAsync(search, categoryId, isAvailable);
+        var juices = await _juiceService.GetAllAsync(search, categoryId, isAvailable, pageNumber, pageSize);
         return Ok(juices);
     }
 

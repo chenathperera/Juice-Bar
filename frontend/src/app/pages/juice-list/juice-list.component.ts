@@ -19,6 +19,10 @@ export class JuiceListComponent implements OnInit {
   searchTerm = '';
   selectedCategoryId = 'all';
   availabilityFilter = 'all';
+  pageNumber = 1;
+  pageSize = 5;
+  totalCount = 0;
+  totalPages = 0;
   isLoading = true;
   isLoadingCategories = true;
   errorMessage = '';
@@ -72,11 +76,18 @@ export class JuiceListComponent implements OnInit {
       filters.isAvailable = false;
     }
 
+    filters.pageNumber = this.pageNumber;
+    filters.pageSize = this.pageSize;
+
     this.isLoading = true;
 
     this.juiceService.getJuices(filters).subscribe({
-      next: (juices) => {
-        this.juices = juices;
+      next: (result) => {
+        this.juices = result.items;
+        this.totalCount = result.totalCount;
+        this.pageNumber = result.pageNumber;
+        this.pageSize = result.pageSize;
+        this.totalPages = result.totalPages;
         this.isLoading = false;
       },
       error: () => {
@@ -87,6 +98,7 @@ export class JuiceListComponent implements OnInit {
   }
 
   applyFilters(): void {
+    this.pageNumber = 1;
     this.loadJuices();
   }
 
@@ -94,6 +106,25 @@ export class JuiceListComponent implements OnInit {
     this.searchTerm = '';
     this.selectedCategoryId = 'all';
     this.availabilityFilter = 'all';
+    this.pageNumber = 1;
+    this.loadJuices();
+  }
+
+  goToPreviousPage(): void {
+    if (this.pageNumber <= 1) {
+      return;
+    }
+
+    this.pageNumber--;
+    this.loadJuices();
+  }
+
+  goToNextPage(): void {
+    if (this.pageNumber >= this.totalPages) {
+      return;
+    }
+
+    this.pageNumber++;
     this.loadJuices();
   }
 
@@ -109,8 +140,8 @@ export class JuiceListComponent implements OnInit {
 
     this.juiceService.deleteJuice(juice.id).subscribe({
       next: () => {
-        this.juices = this.juices.filter((item) => item.id !== juice.id);
         this.deletingJuiceId = null;
+        this.loadJuices();
       },
       error: () => {
         this.errorMessage = 'Unable to delete the juice right now. Please try again.';

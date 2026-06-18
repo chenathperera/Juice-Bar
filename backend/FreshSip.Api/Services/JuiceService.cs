@@ -14,8 +14,16 @@ public class JuiceService : IJuiceService
         _context = context;
     }
 
-    public async Task<IEnumerable<JuiceDto>> GetAllAsync(string? search, int? categoryId, bool? isAvailable)
+    public async Task<PagedResultDto<JuiceDto>> GetAllAsync(
+        string? search,
+        int? categoryId,
+        bool? isAvailable,
+        int pageNumber,
+        int pageSize)
     {
+        pageNumber = pageNumber < 1 ? 1 : pageNumber;
+        pageSize = pageSize < 1 ? 5 : pageSize;
+
         IQueryable<Juice> query = _context.Juices
             .Include(juice => juice.Category);
 
@@ -35,9 +43,24 @@ public class JuiceService : IJuiceService
             query = query.Where(juice => juice.IsAvailable == isAvailable.Value);
         }
 
-        return await query
+        var totalCount = await query.CountAsync();
+        var totalPages = totalCount == 0 ? 0 : (int)Math.Ceiling(totalCount / (double)pageSize);
+
+        var items = await query
+            .OrderBy(juice => juice.Name)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
             .Select(juice => MapToJuiceDto(juice))
             .ToListAsync();
+
+        return new PagedResultDto<JuiceDto>
+        {
+            Items = items,
+            TotalCount = totalCount,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalPages = totalPages
+        };
     }
 
     public async Task<JuiceDto?> GetByIdAsync(int id)

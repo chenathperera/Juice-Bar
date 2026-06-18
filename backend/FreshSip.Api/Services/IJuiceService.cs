@@ -4,7 +4,12 @@ namespace FreshSip.Api.Services;
 
 public interface IJuiceService
 {
-    Task<IEnumerable<JuiceDto>> GetAllAsync(string? search, int? categoryId, bool? isAvailable);
+    Task<PagedResultDto<JuiceDto>> GetAllAsync(
+        string? search,
+        int? categoryId,
+        bool? isAvailable,
+        int pageNumber,
+        int pageSize);
 
     Task<JuiceDto?> GetByIdAsync(int id);
 

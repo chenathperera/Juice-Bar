@@ -8,6 +8,16 @@ export interface JuiceFilters {
   search?: string;
   categoryId?: number;
   isAvailable?: boolean;
+  pageNumber?: number;
+  pageSize?: number;
+}
+
+export interface PagedJuiceResult {
+  items: Juice[];
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
 }
 
 @Injectable({
@@ -18,7 +28,7 @@ export class JuiceService {
 
   constructor(private http: HttpClient) {}
 
-  getJuices(filters?: JuiceFilters): Observable<Juice[]> {
+  getJuices(filters?: JuiceFilters): Observable<PagedJuiceResult> {
     let params = new HttpParams();
 
     if (filters?.search) {
@@ -33,7 +43,15 @@ export class JuiceService {
       params = params.set('isAvailable', filters.isAvailable);
     }
 
-    return this.http.get<Juice[]>(this.apiUrl, { params });
+    if (filters?.pageNumber !== undefined) {
+      params = params.set('pageNumber', filters.pageNumber);
+    }
+
+    if (filters?.pageSize !== undefined) {
+      params = params.set('pageSize', filters.pageSize);
+    }
+
+    return this.http.get<PagedJuiceResult>(this.apiUrl, { params });
   }
 
   getJuiceById(id: number): Observable<Juice> {
