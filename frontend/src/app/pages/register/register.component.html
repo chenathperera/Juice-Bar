@@ -1,0 +1,87 @@
+<section class="register-page">
+  <div class="page-header">
+    <p class="eyebrow">FreshSip Access</p>
+    <h1>Register</h1>
+    <p>Create a new FreshSip user account.</p>
+  </div>
+
+  <div class="register-card">
+    <form #registerForm="ngForm" (ngSubmit)="submitForm(registerForm)" novalidate>
+      <div class="form-group">
+        <label for="userName">Username</label>
+        <input
+          id="userName"
+          name="userName"
+          type="text"
+          [(ngModel)]="registerData.userName"
+          #userName="ngModel"
+          required
+        />
+        <p *ngIf="userName.invalid && userName.touched" class="validation-message">
+          Username is required.
+        </p>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          [(ngModel)]="registerData.email"
+          #email="ngModel"
+          required
+          email
+        />
+        <p *ngIf="email.errors?.['required'] && email.touched" class="validation-message">
+          Email is required.
+        </p>
+        <p *ngIf="email.errors?.['email'] && email.touched" class="validation-message">
+          Enter a valid email address.
+        </p>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          [(ngModel)]="registerData.password"
+          #password="ngModel"
+          required
+          minlength="6"
+        />
+        <p *ngIf="password.errors?.['required'] && password.touched" class="validation-message">
+          Password is required.
+        </p>
+        <p *ngIf="password.errors?.['minlength'] && password.touched" class="validation-message">
+          Password must be at least 6 characters.
+        </p>
+      </div>
+
+      <div class="form-group">
+        <label for="role">Role</label>
+        <select
+          id="role"
+          name="role"
+          [(ngModel)]="registerData.role"
+          #role="ngModel"
+          required
+        >
+          <option value="Customer">Customer</option>
+          <option value="Admin">Admin</option>
+        </select>
+      </div>
+
+      <p *ngIf="isLoading" class="status-message">Registering...</p>
+      <p *ngIf="errorMessage" class="status-message error">{{ errorMessage }}</p>
+      <p *ngIf="successMessage" class="status-message success">{{ successMessage }}</p>
+
+      <div class="button-row">
+        <button type="submit" [disabled]="isLoading">Register</button>
+        <a routerLink="/login" class="secondary-link">Back to Login</a>
+      </div>
+    </form>
+  </div>
+</section>

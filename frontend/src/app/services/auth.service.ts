@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
-import { LoginRequest, LoginResponse } from '../models/auth.model';
+import { LoginRequest, LoginResponse, RegisterRequest } from '../models/auth.model';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +21,10 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, loginRequest).pipe(
       tap((response) => this.storeToken(response.token))
     );
+  }
+
+  register(registerRequest: RegisterRequest): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/register`, registerRequest);
   }
 
   storeToken(token: string): void {

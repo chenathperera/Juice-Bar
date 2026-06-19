@@ -10,11 +10,13 @@ import { OrderListComponent } from './pages/order-list/order-list.component';
 import { MenuComponent } from './pages/menu/menu.component';
 import { TrackOrderComponent } from './pages/track-order/track-order.component';
 import { LoginComponent } from './pages/login/login.component';
+import { RegisterComponent } from './pages/register/register.component';
 import { authGuard } from './auth.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
   { path: 'menu', component: MenuComponent },
   { path: 'track-order', component: TrackOrderComponent },
   { path: 'admin/juices', component: JuiceListComponent, canActivate: [authGuard] },
