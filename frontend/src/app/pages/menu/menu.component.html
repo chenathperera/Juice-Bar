@@ -19,37 +19,89 @@
 
   <div *ngIf="!isLoading" class="menu-layout">
     <div class="menu-grid">
-      <article *ngFor="let juice of juices" class="menu-card">
-        <img
-          *ngIf="juice.imageUrl"
-          [src]="juice.imageUrl"
-          [alt]="juice.name"
-          class="juice-image"
-        />
-
-        <div class="menu-card-content">
-          <div class="menu-top-row">
-            <h2>{{ juice.name }}</h2>
-            <span class="price">${{ juice.price.toFixed(2) }}</span>
+      <div class="filters-card">
+        <div class="filters-grid">
+          <div class="filter-group">
+            <label for="searchTerm">Search by name</label>
+            <input
+              id="searchTerm"
+              name="searchTerm"
+              type="text"
+              [(ngModel)]="searchTerm"
+              placeholder="Search juices..."
+            />
           </div>
 
-          <p class="description">{{ juice.description || 'No description available yet.' }}</p>
-          <p class="detail"><strong>Category:</strong> {{ juice.categoryName }}</p>
-          <p class="detail availability"><strong>Status:</strong> {{ juice.isAvailable ? 'Available' : 'Unavailable' }}</p>
+          <div class="filter-group">
+            <label for="maxPrice">Max price</label>
+            <input
+              id="maxPrice"
+              name="maxPrice"
+              type="number"
+              min="0"
+              step="0.01"
+              [(ngModel)]="maxPrice"
+              placeholder="Any price"
+            />
+          </div>
 
-          <button
-            type="button"
-            class="primary-button"
-            (click)="addToCart(juice)"
-            [disabled]="!juice.isAvailable"
-          >
-            Add to Cart
-          </button>
+          <div class="filter-group">
+            <label for="availabilityFilter">Availability</label>
+            <select id="availabilityFilter" name="availabilityFilter" [(ngModel)]="availabilityFilter">
+              <option value="available">Available</option>
+              <option value="all">All</option>
+              <option value="unavailable">Unavailable</option>
+            </select>
+          </div>
         </div>
-      </article>
+
+        <button type="button" class="secondary-button" (click)="clearFilters()">Clear Filters</button>
+      </div>
+
+      <div *ngFor="let group of groupedJuices" class="category-section">
+        <div class="category-header">
+          <h2>{{ group.categoryName }}</h2>
+          <p>{{ group.juices.length }} juice{{ group.juices.length === 1 ? '' : 's' }}</p>
+        </div>
+
+        <article *ngFor="let juice of group.juices" class="menu-card">
+          <img
+            *ngIf="juice.imageUrl"
+            [src]="juice.imageUrl"
+            [alt]="juice.name"
+            class="juice-image"
+          />
+
+          <div class="menu-card-content">
+            <div class="menu-top-row">
+              <h3>{{ juice.name }}</h3>
+              <span class="price">${{ juice.price.toFixed(2) }}</span>
+            </div>
+
+            <p class="description">{{ juice.description || 'No description available yet.' }}</p>
+            <p class="detail"><strong>Category:</strong> {{ juice.categoryName }}</p>
+            <p class="detail availability" [class.unavailable]="!juice.isAvailable">
+              <strong>Status:</strong> {{ juice.isAvailable ? 'Available' : 'Unavailable' }}
+            </p>
+
+            <button
+              type="button"
+              class="primary-button"
+              (click)="addToCart(juice)"
+              [disabled]="!juice.isAvailable"
+            >
+              Add to Cart
+            </button>
+          </div>
+        </article>
+      </div>
 
       <p *ngIf="juices.length === 0" class="message">
-        No available juices were found in the menu right now.
+        No juices were found in the menu right now.
+      </p>
+
+      <p *ngIf="juices.length > 0 && filteredJuices.length === 0" class="message">
+        No juices match your current filters.
       </p>
     </div>
 

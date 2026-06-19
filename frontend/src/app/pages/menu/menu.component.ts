@@ -14,6 +14,11 @@ interface CartItem {
   quantity: number;
 }
 
+interface MenuCategoryGroup {
+  categoryName: string;
+  juices: Juice[];
+}
+
 @Component({
   selector: 'app-menu',
   imports: [CommonModule, FormsModule, RouterLink],
@@ -24,6 +29,9 @@ export class MenuComponent implements OnInit {
   juices: Juice[] = [];
   cartItems: CartItem[] = [];
   placedOrder: Order | null = null;
+  searchTerm = '';
+  maxPrice: number | null = null;
+  availabilityFilter = 'available';
   customerName = '';
   customerPhone = '';
   isLoading = true;
@@ -44,18 +52,48 @@ export class MenuComponent implements OnInit {
     return this.cartItems.reduce((total, item) => total + this.getSubtotal(item), 0);
   }
 
+  get filteredJuices(): Juice[] {
+    return this.juices.filter((juice) => {
+      const matchesName = juice.name.toLowerCase().includes(this.searchTerm.toLowerCase().trim());
+      const matchesPrice = this.maxPrice === null || juice.price <= this.maxPrice;
+      const matchesAvailability =
+        this.availabilityFilter === 'all' ||
+        (this.availabilityFilter === 'available' && juice.isAvailable) ||
+        (this.availabilityFilter === 'unavailable' && !juice.isAvailable);
+
+      return matchesName && matchesPrice && matchesAvailability;
+    });
+  }
+
+  get groupedJuices(): MenuCategoryGroup[] {
+    const categoryMap = new Map<string, Juice[]>();
+
+    for (const juice of this.filteredJuices) {
+      const categoryName = juice.categoryName || 'Other';
+      const juicesInCategory = categoryMap.get(categoryName) ?? [];
+      juicesInCategory.push(juice);
+      categoryMap.set(categoryName, juicesInCategory);
+    }
+
+    return Array.from(categoryMap.entries())
+      .sort((first, second) => first[0].localeCompare(second[0]))
+      .map(([categoryName, juices]) => ({
+        categoryName,
+        juices: juices.sort((first, second) => first.name.localeCompare(second.name))
+      }));
+  }
+
   private loadMenu(): void {
     this.errorMessage = '';
 
     this.juiceService.getJuices({
-      isAvailable: true,
       sortBy: 'name',
       sortDirection: 'asc',
       pageNumber: 1,
       pageSize: 100
     }).subscribe({
       next: (result) => {
-        this.juices = result.items.filter((juice) => juice.isAvailable);
+        this.juices = result.items;
         this.isLoading = false;
       },
       error: () => {
@@ -103,6 +141,12 @@ export class MenuComponent implements OnInit {
 
   getSubtotal(item: CartItem): number {
     return item.unitPrice * item.quantity;
+  }
+
+  clearFilters(): void {
+    this.searchTerm = '';
+    this.maxPrice = null;
+    this.availabilityFilter = 'available';
   }
 
   placeOrder(form: NgForm): void {
