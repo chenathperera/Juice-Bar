@@ -1,88 +1,166 @@
-<section class="register-page">
-  <div class="page-header">
-    <p class="eyebrow">FreshSip Access</p>
-    <h1>Register</h1>
-    <p>Create a new FreshSip user account.</p>
+<section class="auth-page-scene auth-page-register" aria-hidden="true">
+  <div class="auth-scene-shell">
+    <article class="auth-scene-card auth-scene-card-primary">
+      <img src="assets/auth-drinks.png" alt="">
+      <div class="auth-scene-copy">
+        <p>FreshSip Sign Up</p>
+        <strong>Start sipping with your own account.</strong>
+      </div>
+    </article>
+
+    <article class="auth-scene-card auth-scene-card-secondary">
+      <div class="auth-scene-badge">FreshSip Favorite</div>
+      <h2>Fruit Coolers</h2>
+      <p>Create your account and keep track of orders, favorites, and updates in one place.</p>
+    </article>
   </div>
+</section>
 
-  <div class="register-card">
-    <form #registerForm="ngForm" (ngSubmit)="submitForm(registerForm)" novalidate>
-      <div class="form-group">
-        <label for="userName">Username</label>
-        <input
-          id="userName"
-          name="userName"
-          type="text"
-          [(ngModel)]="registerData.userName"
-          #userName="ngModel"
-          required
-        />
-        <p *ngIf="userName.invalid && userName.touched" class="validation-message">
-          Username is required.
-        </p>
+<section class="auth-screen">
+  <div class="auth-modal">
+    <button type="button" class="auth-close-button" routerLink="/" aria-label="Close">
+      <span>&times;</span>
+    </button>
+
+    <div class="auth-media-panel">
+      <img src="assets/auth-drinks.png" alt="FreshSip drinks">
+      <div class="auth-media-overlay"></div>
+      <div class="auth-media-copy">
+        <p>Refresh Your Senses,</p>
+        <p>Instantly.</p>
+      </div>
+    </div>
+
+    <div class="auth-form-panel">
+      <div class="auth-brand-row">
+        <img src="assets/logo.svg" alt="FreshSip logo">
+        <span>JUICE WORLD</span>
       </div>
 
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          [(ngModel)]="registerData.email"
-          #email="ngModel"
-          required
-          email
-        />
-        <p *ngIf="email.errors?.['required'] && email.touched" class="validation-message">
-          Email is required.
-        </p>
-        <p *ngIf="email.errors?.['email'] && email.touched" class="validation-message">
-          Enter a valid email address.
-        </p>
+      <div class="auth-heading-block">
+        <h1>Sign Up</h1>
+        <p>Create your FreshSip account and continue.</p>
       </div>
 
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          [(ngModel)]="registerData.password"
-          #password="ngModel"
-          required
-          minlength="6"
-        />
-        <p *ngIf="password.errors?.['required'] && password.touched" class="validation-message">
-          Password is required.
-        </p>
-        <p *ngIf="password.errors?.['minlength'] && password.touched" class="validation-message">
-          Password must be at least 6 characters.
-        </p>
-      </div>
+      <div class="auth-card">
+        <form #registerForm="ngForm" (ngSubmit)="submitForm(registerForm)" novalidate>
+          <div class="auth-field">
+            <label for="userName">Username</label>
+            <div class="auth-input-shell">
+              <span class="auth-input-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <circle cx="12" cy="8" r="4"></circle>
+                  <path d="M4 20c1.7-4 5-6 8-6s6.3 2 8 6"></path>
+                </svg>
+              </span>
+              <input
+                id="userName"
+                name="userName"
+                type="text"
+                [(ngModel)]="registerData.userName"
+                #userName="ngModel"
+                required
+                placeholder="Full name"
+              />
+            </div>
+            <p *ngIf="userName.invalid && userName.touched" class="validation-message">
+              Username is required.
+            </p>
+          </div>
 
-      <div class="form-group">
-        <label for="role">Role</label>
-        <select
-          id="role"
-          name="role"
-          [(ngModel)]="registerData.role"
-          #role="ngModel"
-          required
-        >
-          <option value="Customer">Customer</option>
-          <option value="Admin">Admin</option>
-        </select>
-      </div>
+          <div class="auth-field">
+            <label for="email">Email</label>
+            <div class="auth-input-shell">
+              <span class="auth-input-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                  <path d="M4 7l8 6 8-6"></path>
+                </svg>
+              </span>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                [(ngModel)]="registerData.email"
+                #email="ngModel"
+                required
+                email
+                placeholder="Email address"
+              />
+            </div>
+            <p *ngIf="email.errors?.['required'] && email.touched" class="validation-message">
+              Email is required.
+            </p>
+            <p *ngIf="email.errors?.['email'] && email.touched" class="validation-message">
+              Enter a valid email address.
+            </p>
+          </div>
 
-      <p *ngIf="isLoading" class="status-message">Registering...</p>
-      <p *ngIf="errorMessage" class="status-message error">{{ errorMessage }}</p>
-      <p *ngIf="successMessage" class="status-message success">{{ successMessage }}</p>
+          <div class="auth-field">
+            <label for="password">Password</label>
+            <div class="auth-input-shell">
+              <span class="auth-input-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <rect x="5" y="11" width="14" height="10" rx="2"></rect>
+                  <path d="M8 11V8a4 4 0 0 1 8 0v3"></path>
+                </svg>
+              </span>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                [(ngModel)]="registerData.password"
+                #password="ngModel"
+                required
+                minlength="6"
+                placeholder="Password"
+              />
+            </div>
+            <p *ngIf="password.errors?.['required'] && password.touched" class="validation-message">
+              Password is required.
+            </p>
+            <p *ngIf="password.errors?.['minlength'] && password.touched" class="validation-message">
+              Password must be at least 6 characters.
+            </p>
+          </div>
 
-      <div class="button-row">
-        <button type="submit" [disabled]="isLoading">Register</button>
-        <a routerLink="/login" class="secondary-link">Back to Login</a>
+          <div class="auth-field">
+            <label for="role">Role</label>
+            <div class="auth-input-shell auth-select-shell">
+              <span class="auth-input-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4z"></path>
+                  <path d="M4 20c1.4-3.6 4.2-5.4 8-5.4s6.6 1.8 8 5.4"></path>
+                </svg>
+              </span>
+              <select
+                id="role"
+                name="role"
+                [(ngModel)]="registerData.role"
+                #role="ngModel"
+                required
+              >
+                <option value="Customer">Customer</option>
+                <option value="Admin">Admin</option>
+              </select>
+            </div>
+          </div>
+
+          <p *ngIf="isLoading" class="status-message">Registering...</p>
+          <p *ngIf="errorMessage" class="status-message error">{{ errorMessage }}</p>
+          <p *ngIf="successMessage" class="status-message success">{{ successMessage }}</p>
+
+          <div class="auth-actions">
+            <button type="submit" class="auth-submit-button" [disabled]="isLoading">Create Account</button>
+          </div>
+
+          <p class="auth-switch-text">
+            Already have an account?
+            <a routerLink="/login">Login</a>
+          </p>
+        </form>
       </div>
-    </form>
+    </div>
   </div>
 </section>
 
