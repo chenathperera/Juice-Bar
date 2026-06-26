@@ -37,14 +37,6 @@
           <strong>Categories</strong>
         </div>
 
-        <label class="category-search">
-          <input type="search" [(ngModel)]="searchTerm" placeholder="Search Juice...">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="6.5"></circle>
-            <line x1="16" y1="16" x2="22" y2="22"></line>
-          </svg>
-        </label>
-
         <div class="category-list">
           <button
             *ngFor="let category of categories"
@@ -59,6 +51,49 @@
             <span class="category-chip-label">{{ category.label }}</span>
           </button>
         </div>
+      </section>
+
+      <section class="catalog-filters" aria-label="Product filters">
+        <div class="catalog-filter-group">
+          <label for="searchJuices">Search by name</label>
+          <input id="searchJuices" type="search" [(ngModel)]="searchTerm" placeholder="Search juices...">
+        </div>
+
+        <div class="catalog-filter-group">
+          <label for="categoryFilter">Filter by category</label>
+          <select id="categoryFilter" [(ngModel)]="selectedCategoryId">
+            <option value="">All Categories</option>
+            <option *ngFor="let category of categories" [value]="category.id">{{ category.label }}</option>
+          </select>
+        </div>
+
+        <div class="catalog-filter-group">
+          <label for="availabilityFilter">Filter by availability</label>
+          <select id="availabilityFilter" [(ngModel)]="availabilityFilter">
+            <option value="all">All</option>
+            <option value="available">Available</option>
+            <option value="unavailable">Unavailable</option>
+          </select>
+        </div>
+
+        <div class="catalog-filter-group">
+          <label for="sortBy">Sort by</label>
+          <select id="sortBy" [(ngModel)]="sortBy">
+            <option value="name">Name</option>
+            <option value="price">Price</option>
+            <option value="availability">Availability</option>
+          </select>
+        </div>
+
+        <div class="catalog-filter-group">
+          <label for="sortDirection">Sort direction</label>
+          <select id="sortDirection" [(ngModel)]="sortDirection">
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+          </select>
+        </div>
+
+        <button class="clear-filters-btn" type="button" (click)="clearFilters()">Clear Filters</button>
       </section>
 
       <section class="catalog-section">

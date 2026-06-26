@@ -30,6 +30,7 @@ interface StorefrontProduct {
   description: string;
   image: string;
   liked: boolean;
+  isAvailable: boolean;
 }
 
 @Component({
@@ -43,6 +44,9 @@ export class ProductsComponent implements OnInit, OnDestroy {
   catalogItems: StorefrontProduct[] = [];
   selectedCategoryId = '';
   searchTerm = '';
+  availabilityFilter = 'all';
+  sortBy = 'name';
+  sortDirection = 'asc';
   modalItem: StorefrontProduct | null = null;
   modalQty = 1;
   cartCount = 0;
@@ -56,20 +60,32 @@ export class ProductsComponent implements OnInit, OnDestroy {
   ) {}
 
   get filteredItems(): StorefrontProduct[] {
-    const items = this.catalogItems.filter((item) => item.categoryId === this.selectedCategoryId);
+    let items = [...this.catalogItems];
     const term = this.searchTerm.trim().toLowerCase();
 
-    if (!term) {
-      return items;
+    if (this.selectedCategoryId) {
+      items = items.filter((item) => item.categoryId === this.selectedCategoryId);
     }
 
-    return items.filter((item) =>
+    if (this.availabilityFilter === 'available') {
+      items = items.filter((item) => item.isAvailable);
+    } else if (this.availabilityFilter === 'unavailable') {
+      items = items.filter((item) => !item.isAvailable);
+    }
+
+    if (!term) {
+      return this.sortItems(items);
+    }
+
+    const filteredItems = items.filter((item) =>
       item.name.toLowerCase().includes(term) || item.description.toLowerCase().includes(term)
     );
+
+    return this.sortItems(filteredItems);
   }
 
   get selectedCategoryLabel(): string {
-    return this.categories.find((category) => category.id === this.selectedCategoryId)?.label ?? '';
+    return this.categories.find((category) => category.id === this.selectedCategoryId)?.label ?? 'All Juices';
   }
 
   ngOnInit(): void {
@@ -89,6 +105,14 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
   selectCategory(categoryId: string): void {
     this.selectedCategoryId = categoryId;
+  }
+
+  clearFilters(): void {
+    this.searchTerm = '';
+    this.selectedCategoryId = '';
+    this.availabilityFilter = 'all';
+    this.sortBy = 'name';
+    this.sortDirection = 'asc';
   }
 
   getBasketQuantity(itemId: string): number {
@@ -146,14 +170,12 @@ export class ProductsComponent implements OnInit, OnDestroy {
       pageSize: 100
     }).subscribe({
       next: (result) => {
-        const availableJuices = result.items.filter((juice) => juice.isAvailable);
-
-        if (availableJuices.length === 0) {
+        if (result.items.length === 0) {
           this.useFallbackCatalog();
           return;
         }
 
-        this.buildCatalogFromApi(availableJuices);
+        this.buildCatalogFromApi(result.items);
       },
       error: () => {
         this.useFallbackCatalog();
@@ -196,7 +218,8 @@ export class ProductsComponent implements OnInit, OnDestroy {
         likes: this.buildLikeLabel(index),
         description: juice.description?.trim() || 'Freshly prepared signature item from Juice World.',
         image: visual.catalogImages[categoryIndex % visual.catalogImages.length],
-        liked: index % 3 === 0
+        liked: index % 3 === 0,
+        isAvailable: juice.isAvailable
       };
     });
 
@@ -210,7 +233,11 @@ export class ProductsComponent implements OnInit, OnDestroy {
       thumb: visual.thumb
     }));
 
-    this.catalogItems = FALLBACK_CATALOG_ITEMS.map((item) => ({ ...item, juiceId: null }));
+    this.catalogItems = FALLBACK_CATALOG_ITEMS.map((item, index) => ({
+      ...item,
+      juiceId: null,
+      isAvailable: index % 5 !== 0
+    }));
     this.selectedCategoryId = this.categories[0]?.id ?? '';
   }
 
@@ -218,6 +245,22 @@ export class ProductsComponent implements OnInit, OnDestroy {
     const percent = 88 + (index % 6);
     const count = 40 + index * 3;
     return `${percent}% (${count})`;
+  }
+
+  private sortItems(items: StorefrontProduct[]): StorefrontProduct[] {
+    return items.sort((left, right) => {
+      let comparison = 0;
+
+      if (this.sortBy === 'price') {
+        comparison = left.price - right.price;
+      } else if (this.sortBy === 'availability') {
+        comparison = Number(right.isAvailable) - Number(left.isAvailable);
+      } else {
+        comparison = left.name.localeCompare(right.name);
+      }
+
+      return this.sortDirection === 'desc' ? comparison * -1 : comparison;
+    });
   }
 
   private slugify(value: string): string {
