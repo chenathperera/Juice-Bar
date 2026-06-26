@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { SiteFooterComponent } from '../../components/site-footer/site-footer.component';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-profile',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, SiteFooterComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })

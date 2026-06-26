@@ -3,12 +3,13 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { SiteFooterComponent } from '../../components/site-footer/site-footer.component';
 import { RegisterRequest } from '../../models/auth.model';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-register',
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, SiteFooterComponent],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })

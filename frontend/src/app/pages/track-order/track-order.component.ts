@@ -2,12 +2,13 @@ import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
+import { SiteFooterComponent } from '../../components/site-footer/site-footer.component';
 import { Order } from '../../models/order.model';
 import { OrderService } from '../../services/order.service';
 
 @Component({
   selector: 'app-track-order',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SiteFooterComponent],
   templateUrl: './track-order.component.html',
   styleUrl: './track-order.component.css'
 })

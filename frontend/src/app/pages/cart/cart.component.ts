@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AccountMenuComponent } from '../../components/account-menu/account-menu.component';
+import { SiteFooterComponent } from '../../components/site-footer/site-footer.component';
 import { FALLBACK_CATALOG_ITEMS } from '../../data/storefront-data';
 import { CreateOrder } from '../../models/order.model';
 import { CartStoreService } from '../../services/cart-store.service';
@@ -21,7 +22,7 @@ interface CartPageItem {
 
 @Component({
   selector: 'app-cart',
-  imports: [CommonModule, FormsModule, RouterLink, AccountMenuComponent],
+  imports: [CommonModule, FormsModule, RouterLink, AccountMenuComponent, SiteFooterComponent],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.css'
 })

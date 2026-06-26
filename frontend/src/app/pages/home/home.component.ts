@@ -3,6 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AccountMenuComponent } from '../../components/account-menu/account-menu.component';
+import { SiteFooterComponent } from '../../components/site-footer/site-footer.component';
 import { HERO_DESIGN_PRODUCTS, HeroDesignProduct } from '../../data/storefront-data';
 import { Juice } from '../../models/juice.model';
 import { CartStoreService } from '../../services/cart-store.service';
@@ -16,7 +17,7 @@ interface BestSellingCard {
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, RouterLink, AccountMenuComponent],
+  imports: [CommonModule, RouterLink, AccountMenuComponent, SiteFooterComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })

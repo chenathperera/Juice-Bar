@@ -1220,6 +1220,28 @@ input {
   color: #222;
   font-size: 15px;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.catalog-meta-separator {
+  color: #8b8b8b;
+}
+
+.like-rate {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: #ef476f;
+  font-weight: 700;
+}
+
+.like-rate svg {
+  width: 0.95rem;
+  height: 0.95rem;
+  fill: currentColor;
 }
 
 .catalog-description {
@@ -1388,6 +1410,10 @@ input {
 .modal-meta {
   color: #242424;
   font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
 }
 
 .modal-description {

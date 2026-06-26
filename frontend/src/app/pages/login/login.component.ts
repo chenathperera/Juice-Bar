@@ -3,12 +3,13 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { SiteFooterComponent } from '../../components/site-footer/site-footer.component';
 import { LoginRequest } from '../../models/auth.model';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, SiteFooterComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AccountMenuComponent } from '../../components/account-menu/account-menu.component';
+import { SiteFooterComponent } from '../../components/site-footer/site-footer.component';
 import {
   DESIGN_CATEGORY_VISUALS,
   FALLBACK_CATALOG_ITEMS,
@@ -35,7 +36,7 @@ interface StorefrontProduct {
 
 @Component({
   selector: 'app-products',
-  imports: [CommonModule, FormsModule, RouterLink, AccountMenuComponent],
+  imports: [CommonModule, FormsModule, RouterLink, AccountMenuComponent, SiteFooterComponent],
   templateUrl: './products.component.html',
   styleUrl: './products.component.css'
 })
