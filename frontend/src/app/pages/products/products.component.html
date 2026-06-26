@@ -1,0 +1,134 @@
+<div class="shop-app">
+  <section class="shop-page products-page" id="productsPage">
+    <img class="shop-bg-shape shop-bg-top" src="assets/blue shape 1.svg" alt="">
+    <img class="shop-bg-shape shop-bg-bottom" src="assets/blue shape 2.svg" alt="">
+
+    <header class="shop-header">
+      <a class="shop-logo-link" routerLink="/" aria-label="Juice World home">
+        <img class="shop-logo" src="assets/logo.svg" alt="Juice World logo">
+        <span class="shop-logo-copy">
+          <strong>JUICE WORLD</strong>
+          <small>FRESH, NATURAL, TASTY.</small>
+        </span>
+      </a>
+
+      <nav class="shop-nav" aria-label="Shop navigation">
+        <a routerLink="/">Home</a>
+        <a routerLink="/products">Products</a>
+        <a routerLink="/" fragment="visitTitle">About</a>
+        <a routerLink="/" fragment="siteFooter">Contact</a>
+      </nav>
+
+      <button class="shop-cart-btn" type="button" routerLink="/cart" aria-label="View cart">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="9" cy="20" r="1.5"></circle>
+          <circle cx="18" cy="20" r="1.5"></circle>
+          <path d="M2 3h3l2.3 10.2a1 1 0 0 0 1 .8h8.9a1 1 0 0 0 1-.7L21 7H6.2"></path>
+        </svg>
+        <span class="shop-cart-badge">{{ cartCount }}</span>
+      </button>
+      <app-account-menu />
+    </header>
+
+    <div class="shop-shell">
+      <section class="category-banner">
+        <div class="category-banner-title">
+          <span>Juice</span>
+          <strong>Categories</strong>
+        </div>
+
+        <label class="category-search">
+          <input type="search" [(ngModel)]="searchTerm" placeholder="Search Juice...">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="6.5"></circle>
+            <line x1="16" y1="16" x2="22" y2="22"></line>
+          </svg>
+        </label>
+
+        <div class="category-list">
+          <button
+            *ngFor="let category of categories"
+            class="category-chip"
+            type="button"
+            [class.is-active]="category.id === selectedCategoryId"
+            (click)="selectCategory(category.id)"
+          >
+            <span class="category-chip-frame">
+              <img [src]="category.thumb" [alt]="category.label">
+            </span>
+            <span class="category-chip-label">{{ category.label }}</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="catalog-section">
+        <h1 class="catalog-heading" id="categoryHeading">{{ selectedCategoryLabel }}</h1>
+        <div class="catalog-grid">
+          <article
+            *ngFor="let item of filteredItems; let index = index"
+            class="catalog-card"
+            [class.featured]="index === 0"
+            (click)="openModal(item)"
+          >
+            <div class="catalog-card-media">
+              <img [src]="item.image" [alt]="item.name">
+            </div>
+            <div class="catalog-card-body">
+              <h3>{{ item.name }}</h3>
+              <p class="catalog-meta">{{ formatCurrency(item.price) }} · {{ item.likes }}</p>
+              <p class="catalog-description">{{ item.description }}</p>
+              <p *ngIf="index === 0 && item.liked" class="catalog-liked">#1 most liked</p>
+
+              <div *ngIf="index === 0; else openButton" class="quantity-stepper featured-stepper">
+                <button type="button" [disabled]="getBasketQuantity(item.id) === 0" (click)="$event.stopPropagation(); decreaseOne(item.id)">-</button>
+                <span>{{ getBasketQuantity(item.id) }}</span>
+                <button type="button" (click)="$event.stopPropagation(); addOne(item.id)">+</button>
+              </div>
+
+              <ng-template #openButton>
+                <button class="catalog-plus-btn" type="button" (click)="$event.stopPropagation(); openModal(item)">+</button>
+              </ng-template>
+            </div>
+          </article>
+
+          <p *ngIf="filteredItems.length === 0" class="cart-empty">No items match your search.</p>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <button class="basket-bar" type="button" [hidden]="cartCount === 0" (click)="goToCart()">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="9" cy="20" r="1.5"></circle>
+      <circle cx="18" cy="20" r="1.5"></circle>
+      <path d="M2 3h3l2.3 10.2a1 1 0 0 0 1 .8h8.9a1 1 0 0 0 1-.7L21 7H6.2"></path>
+    </svg>
+    <span>View basket • {{ cartCount }}</span>
+  </button>
+
+  <div class="product-modal-backdrop" [hidden]="!modalItem" (click)="closeModal()">
+    <div *ngIf="modalItem" class="product-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" (click)="$event.stopPropagation()">
+      <button class="modal-close-btn" type="button" aria-label="Close" (click)="closeModal()">×</button>
+
+      <div class="product-modal-media">
+        <img [src]="modalItem.image" [alt]="modalItem.name">
+      </div>
+
+      <div class="product-modal-copy">
+        <h2 id="modalTitle">{{ modalItem.name }}</h2>
+        <p class="modal-meta">{{ formatCurrency(modalItem.price) }} · {{ modalItem.likes }}</p>
+        <p class="modal-description">{{ modalItem.description }}</p>
+
+        <div class="quantity-stepper modal-stepper">
+          <button type="button" [disabled]="modalQty <= 1" (click)="decreaseModalQty()">-</button>
+          <span>{{ modalQty }}</span>
+          <button type="button" (click)="increaseModalQty()">+</button>
+        </div>
+
+        <button class="modal-add-btn" type="button" (click)="addModalItemToBasket()">
+          Add {{ modalQty }} to basket • {{ formatCurrency(modalItem.price * modalQty) }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

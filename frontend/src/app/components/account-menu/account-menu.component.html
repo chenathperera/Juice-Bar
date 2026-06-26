@@ -1,0 +1,16 @@
+<div class="account-menu" (click)="$event.stopPropagation()">
+  <button class="icon-btn account-icon-btn" type="button" aria-label="Account" (click)="toggleMenu($event)">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="8" r="4"></circle>
+      <path d="M4 21c1.8-3.6 5-5.5 8-5.5S18.2 17.4 20 21"></path>
+    </svg>
+  </button>
+
+  <div *ngIf="isOpen" class="account-dropdown">
+    <a *ngIf="!isLoggedIn" routerLink="/login" (click)="closeMenu()">Login</a>
+    <a *ngIf="!isLoggedIn" routerLink="/register" (click)="closeMenu()">Register</a>
+    <a *ngIf="isLoggedIn" routerLink="/profile" (click)="closeMenu()">My Profile</a>
+    <a routerLink="/track-order" (click)="closeMenu()">Track Order</a>
+    <button *ngIf="isLoggedIn" type="button" (click)="logout()">Logout</button>
+  </div>
+</div>

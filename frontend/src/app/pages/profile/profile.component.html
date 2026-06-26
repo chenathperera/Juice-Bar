@@ -1,0 +1,23 @@
+<section class="profile-page">
+  <div class="profile-card">
+    <h1>My Profile</h1>
+
+    <div *ngIf="isLoggedIn; else loggedOutState" class="profile-details">
+      <p><strong>Name:</strong> {{ userName }}</p>
+      <p><strong>Email:</strong> {{ userEmail }}</p>
+      <p><strong>Role:</strong> {{ userRole }}</p>
+      <div class="profile-links">
+        <a routerLink="/track-order">Track Order</a>
+        <a routerLink="/products">Go to Products</a>
+      </div>
+    </div>
+
+    <ng-template #loggedOutState>
+      <p class="profile-message">Please log in to view your profile details.</p>
+      <div class="profile-links">
+        <a routerLink="/login">Login</a>
+        <a routerLink="/register">Register</a>
+      </div>
+    </ng-template>
+  </div>
+</section>

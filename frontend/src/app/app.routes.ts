@@ -7,17 +7,22 @@ import { EditCategoryComponent } from './pages/edit-category/edit-category.compo
 import { JuiceListComponent } from './pages/juice-list/juice-list.component';
 import { CategoryListComponent } from './pages/category-list/category-list.component';
 import { OrderListComponent } from './pages/order-list/order-list.component';
-import { MenuComponent } from './pages/menu/menu.component';
+import { ProductsComponent } from './pages/products/products.component';
+import { CartComponent } from './pages/cart/cart.component';
 import { TrackOrderComponent } from './pages/track-order/track-order.component';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
+import { ProfileComponent } from './pages/profile/profile.component';
 import { authGuard } from './auth.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'menu', component: MenuComponent },
+  { path: 'profile', component: ProfileComponent },
+  { path: 'products', component: ProductsComponent },
+  { path: 'cart', component: CartComponent },
+  { path: 'menu', redirectTo: 'products', pathMatch: 'full' },
   { path: 'track-order', component: TrackOrderComponent },
   { path: 'admin/juices', component: JuiceListComponent, canActivate: [authGuard] },
   { path: 'admin/juices/add', component: AddJuiceComponent, canActivate: [authGuard] },

@@ -1,0 +1,51 @@
+:host {
+  display: block;
+}
+
+.account-menu {
+  position: relative;
+}
+
+.account-icon-btn svg {
+  width: 2rem;
+  height: 2rem;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.account-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #151515;
+  box-shadow: 0 20px 36px rgba(0, 0, 0, 0.18);
+  z-index: 20;
+}
+
+.account-dropdown a,
+.account-dropdown button {
+  padding: 0.7rem 0.8rem;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  text-decoration: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.account-dropdown a:hover,
+.account-dropdown button:hover {
+  background: #f3f4f6;
+}

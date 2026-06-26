@@ -1,0 +1,117 @@
+<div class="shop-app">
+  <section class="shop-page cart-page" id="cartPage">
+    <img class="shop-bg-shape shop-bg-top" src="assets/blue shape 1.svg" alt="">
+    <img class="shop-bg-shape shop-bg-bottom" src="assets/blue shape 2.svg" alt="">
+
+    <header class="shop-header">
+      <a class="shop-logo-link" routerLink="/" aria-label="Juice World home">
+        <img class="shop-logo" src="assets/logo.svg" alt="Juice World logo">
+        <span class="shop-logo-copy">
+          <strong>JUICE WORLD</strong>
+          <small>FRESH, NATURAL, TASTY.</small>
+        </span>
+      </a>
+
+      <nav class="shop-nav" aria-label="Cart navigation">
+        <a routerLink="/">Home</a>
+        <a routerLink="/products">Products</a>
+        <a routerLink="/" fragment="visitTitle">About</a>
+        <a routerLink="/" fragment="siteFooter">Contact</a>
+      </nav>
+
+      <button class="shop-cart-btn" type="button" routerLink="/cart" aria-label="View cart">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="9" cy="20" r="1.5"></circle>
+          <circle cx="18" cy="20" r="1.5"></circle>
+          <path d="M2 3h3l2.3 10.2a1 1 0 0 0 1 .8h8.9a1 1 0 0 0 1-.7L21 7H6.2"></path>
+        </svg>
+        <span class="shop-cart-badge">{{ cartCount }}</span>
+      </button>
+      <app-account-menu />
+    </header>
+
+    <div class="shop-shell cart-shell">
+      <h1 class="cart-heading">YOUR CART</h1>
+      <p *ngIf="checkoutSuccess" class="checkout-message checkout-success">{{ checkoutSuccess }}</p>
+
+      <div class="cart-layout">
+        <section class="cart-table-box">
+          <div class="cart-table-head">
+            <span>ITEM</span>
+            <span>NAME</span>
+            <span>PRICE</span>
+            <span>QUANTITY</span>
+            <span>TOTAL</span>
+          </div>
+          <div class="cart-table-body">
+            <div *ngIf="cartItems.length === 0" class="cart-empty">Your basket is empty.</div>
+
+            <div *ngFor="let item of cartItems" class="cart-row">
+              <img class="cart-item-thumb" [src]="item.image" [alt]="item.name">
+              <p class="cart-item-name">{{ item.name }}</p>
+              <p class="cart-item-price">{{ formatCurrency(item.price) }}</p>
+
+              <div class="quantity-stepper cart-qty">
+                <button class="cart-trash" type="button" aria-label="Remove item" (click)="decreaseQuantity(item)">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"></path>
+                    <path d="M19 6l-1 13a1 1 0 0 1-1 .9H7a1 1 0 0 1-1-.9L5 6"></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                  </svg>
+                </button>
+                <span>{{ item.quantity }}</span>
+                <button type="button" (click)="increaseQuantity(item)">+</button>
+              </div>
+
+              <p class="cart-item-total">{{ formatCurrency(item.price * item.quantity) }}</p>
+            </div>
+          </div>
+        </section>
+
+        <aside class="order-summary">
+          <h2>ORDER SUMMARY</h2>
+          <div class="order-summary-list">
+            <div *ngIf="cartItems.length === 0" class="cart-empty">Your basket is empty.</div>
+
+            <div *ngFor="let item of cartItems" class="summary-item">
+              <span>{{ item.name }} × {{ item.quantity }}</span>
+              <strong>{{ formatCurrency(item.price * item.quantity) }}</strong>
+            </div>
+          </div>
+          <div class="cart-totals">
+            <h3>CART TOTALS</h3>
+            <div class="totals-row">
+              <span>Total</span>
+              <strong>{{ formatCurrency(grandTotal) }}</strong>
+            </div>
+          </div>
+          <button class="checkout-btn" type="button" (click)="openCheckout()">Go to checkout</button>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <div class="product-modal-backdrop" [hidden]="!isCheckoutOpen" (click)="closeCheckout()">
+    <div *ngIf="isCheckoutOpen" class="product-modal checkout-modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+      <button class="modal-close-btn" type="button" aria-label="Close" (click)="closeCheckout()">×</button>
+
+      <div class="product-modal-copy checkout-copy">
+        <h2>Checkout</h2>
+        <p class="modal-description">Enter customer details to place the order using the current backend API.</p>
+
+        <div class="checkout-fields">
+          <input type="text" [(ngModel)]="customerName" placeholder="Customer name">
+          <input type="text" [(ngModel)]="customerPhone" placeholder="Customer phone">
+        </div>
+
+        <p *ngIf="checkoutError" class="checkout-message checkout-error">{{ checkoutError }}</p>
+
+        <button class="modal-add-btn" type="button" [disabled]="isPlacingOrder" (click)="placeOrder()">
+          {{ isPlacingOrder ? 'Placing order...' : 'Place Order' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

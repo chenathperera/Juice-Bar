@@ -1,23 +1,230 @@
-<div class="page">
-  <main class="hero" id="home">
-    <div class="hero-text">
-      <p class="tagline">Fresh fruit. Bright flavors. Simple code.</p>
-      <h1>Welcome to {{ title }}</h1>
-      <p class="description">
-        This is the first step of our juice bar app. The homepage is built with
-        Angular and it talks to the ASP.NET Core Web API.
-      </p>
-      <a class="menu-button" routerLink="/menu">View Menu</a>
-    </div>
+<div class="home-stack" id="homeStack">
+  <main class="hero" id="hero" [class]="'hero product-' + selectedProduct.id">
+    <svg class="hero-cloud" viewBox="0 0 757 618" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <path d="M-19 -29H650.974C685.359 -29 716.221 -7.90377 728.705 24.134L751.613 82.9217C770.115 130.405 733.548 181.19 682.648 178.7C645.968 176.906 618.726 212.211 629.764 247.237L645.516 297.219C677.675 399.269 569.302 488.604 475.264 437.562L381.429 386.629C355.973 372.811 325 391.241 325 420.205C325 461.98 277.482 485.994 243.849 461.216L225.881 447.979C192.672 423.513 146.379 451.009 151.973 491.876L156.55 525.31C165.519 590.829 96.6228 639.039 38.141 608.166L18.1299 597.602C-4.70866 585.545 -19 561.839 -19 536.014V-29Z" />
+    </svg>
+    <div class="blob blob-bottom"></div>
 
-    <div class="status-card">
-      <h2>API Status</h2>
-      <p>{{ apiStatus }}</p>
-    </div>
+    <img
+      class="decor decor-top"
+      [class.is-splash-in]="isSplashAnimating"
+      [src]="selectedProduct.decorTop"
+      alt=""
+    >
+    <img
+      class="decor decor-bottom"
+      [class.is-splash-in]="isSplashAnimating"
+      [src]="selectedProduct.decorBottom"
+      alt=""
+    >
+
+    <header class="navbar">
+      <a class="brand" routerLink="/" aria-label="Juice World home">
+        <img class="brand-mark" src="assets/logo.svg" alt="Juice World logo">
+        <span class="brand-copy">
+          <strong>Juice World</strong>
+          <small>Fresh. Natural. Tasty.</small>
+        </span>
+      </a>
+
+      <nav class="nav-links" aria-label="Main navigation">
+        <a routerLink="/">Home</a>
+        <a routerLink="/products">Products</a>
+        <a routerLink="/" fragment="visitTitle">About</a>
+        <a routerLink="/" fragment="siteFooter">Contact</a>
+      </nav>
+
+      <div class="nav-icons" aria-label="Quick actions">
+        <button class="icon-btn" type="button" aria-label="Search">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="6.5"></circle>
+            <line x1="16" y1="16" x2="22" y2="22"></line>
+          </svg>
+        </button>
+        <button class="icon-btn cart-icon-btn" type="button" routerLink="/cart" aria-label="Cart">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="9" cy="20" r="1.5"></circle>
+            <circle cx="18" cy="20" r="1.5"></circle>
+            <path d="M2 3h3l2.3 10.2a1 1 0 0 0 1 .8h8.9a1 1 0 0 0 1-.7L21 7H6.2"></path>
+          </svg>
+          <span class="cart-count-badge">{{ cartCount }}</span>
+        </button>
+        <app-account-menu />
+      </div>
+    </header>
+
+    <section class="hero-body">
+      <div class="hero-copy">
+        <h1 class="title" [innerHTML]="selectedProduct.title"></h1>
+        <p class="description">{{ selectedProduct.description }}</p>
+
+        <div class="cta-row">
+          <a class="btn btn-primary" routerLink="/products">Order Now</a>
+          <a class="btn btn-secondary" routerLink="/products">Explore Menu</a>
+        </div>
+
+        <div class="thumbs-section">
+          <div class="thumbs" aria-label="Choose a featured product">
+            <button
+              *ngFor="let product of homeProducts"
+              class="thumb"
+              type="button"
+              [class.is-active]="product.id === selectedProduct.id"
+              [attr.aria-label]="product.label"
+              (click)="rotateToProduct(product.id)"
+            >
+              <span class="thumb-frame">
+                <img [src]="product.thumbnail" [alt]="product.label">
+              </span>
+              <span class="thumb-name">{{ product.label }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <img
+          *ngIf="ghostProduct"
+          class="product-image product-image-ghost is-wheel-out"
+          [src]="ghostProduct.image"
+          [alt]="ghostProduct.label"
+          [style.--ghost-rotate]="ghostProduct.imageRotate"
+          [style.--ghost-scale]="ghostProduct.imageScale"
+        >
+        <img
+          class="product-image"
+          [class.is-wheel-in]="isWheelIn"
+          [src]="selectedProduct.image"
+          [alt]="selectedProduct.label"
+          [style.--product-rotate]="selectedProduct.imageRotate"
+          [style.--product-scale]="selectedProduct.imageScale"
+        >
+      </div>
+    </section>
   </main>
 
-  <section class="menu-preview">
-    <h2>Coming Soon</h2>
-    <p>Our juice menu will be added in the next steps.</p>
+  <section class="best-selling-section" aria-labelledby="bestSellingTitle">
+    <img class="section-splash section-splash-top" [src]="selectedProduct.sectionSplash" alt="">
+    <img class="section-splash section-splash-bottom" [src]="selectedProduct.sectionSplash" alt="">
+
+    <div class="section-shell">
+      <h2 class="section-title" id="bestSellingTitle">Best Selling</h2>
+      <div class="best-selling-grid">
+        <article *ngFor="let card of bestSellingCards" class="best-card">
+          <div class="best-card-image">
+            <span class="best-card-badge">#1 most liked</span>
+            <img [src]="card.image" [alt]="card.title">
+          </div>
+          <div class="best-card-body">
+            <h3>{{ card.title }}</h3>
+            <p class="best-card-price">{{ card.priceLabel }}</p>
+            <a class="card-order-btn" routerLink="/products">Order Now</a>
+          </div>
+        </article>
+      </div>
+    </div>
   </section>
+
+  <section class="visit-section" aria-labelledby="visitTitle">
+    <div class="section-shell visit-shell">
+      <div class="visit-copy">
+        <h2 class="section-title visit-title" id="visitTitle">PLAN YOUR VISIT</h2>
+
+        <div class="visit-list">
+          <article class="visit-item">
+            <img class="visit-icon" src="assets/clock-svgrepo-com (1).svg" alt="">
+            <div class="visit-text">
+              <h3>STORE HOURS:</h3>
+              <p>Mon - Sat: 9:00 AM - 10:00 PM,</p>
+              <p>Sun - 10:00 AM - 8:00 PM</p>
+            </div>
+          </article>
+
+          <article class="visit-item">
+            <img class="visit-icon" src="assets/location-1-svgrepo-com.svg" alt="">
+            <div class="visit-text">
+              <h3>LOCATION:</h3>
+              <p>NO 120/A , Pandura , Kalutara,</p>
+              <p>Sri Lanka</p>
+            </div>
+          </article>
+
+          <article class="visit-item">
+            <img class="visit-icon" src="assets/delivery-svgrepo-com.svg" alt="">
+            <div class="visit-text">
+              <h3>FAST DELIVERY</h3>
+              <p>Available under 30 minutes for local</p>
+              <p>Orders! Enjoy Juice World, fast</p>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="visit-map-card">
+        <img class="visit-map" src="assets/map.png" alt="Juice World location map">
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer" id="siteFooter">
+    <div class="section-shell site-footer-shell">
+      <div class="footer-grid">
+        <section class="footer-brand-block">
+          <a class="footer-brand" routerLink="/" aria-label="Juice World home">
+            <img class="footer-brand-mark" src="assets/logo.svg" alt="Juice World logo">
+            <div class="footer-brand-copy">
+              <strong>Juice World</strong>
+              <p>Fresh drinks, creamy desserts, and happy moments in every order.</p>
+            </div>
+          </a>
+
+          <div class="footer-socials" aria-label="Social media links">
+            <a class="footer-social" href="#" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="5"></rect>
+                <circle cx="12" cy="12" r="4"></circle>
+                <circle cx="17.5" cy="6.5" r="1"></circle>
+              </svg>
+            </a>
+            <a class="footer-social" href="#" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M14 8h3V4h-3c-3 0-5 2-5 5v3H6v4h3v4h4v-4h3.2l.8-4H13V9c0-.7.3-1 1-1z"></path>
+              </svg>
+            </a>
+            <a class="footer-social" href="#" aria-label="TikTok">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M14 4c.6 1.6 1.8 2.8 3.5 3.4V11a7 7 0 0 1-3.5-1V15a5 5 0 1 1-5-5h1.2v3.2H9a1.8 1.8 0 1 0 1.8 1.8V4H14z"></path>
+              </svg>
+            </a>
+          </div>
+        </section>
+
+        <section class="footer-column">
+          <h3>Quick Links</h3>
+          <a routerLink="/">Home</a>
+          <a routerLink="/products">Products</a>
+          <a routerLink="/" fragment="bestSellingTitle">Best Selling</a>
+          <a routerLink="/" fragment="visitTitle">Plan Your Visit</a>
+        </section>
+
+        <section class="footer-column">
+          <h3>Contact</h3>
+          <p>NO 120/A, Pandura, Kalutara, Sri Lanka</p>
+          <a href="tel:+940112345678">+94 011 234 5678</a>
+          <a href="mailto:hello&#64;juiceworld.lk">hello&#64;juiceworld.lk</a>
+        </section>
+
+        <section class="footer-column">
+          <h3>Opening Hours</h3>
+          <p>Mon - Sat: 9:00 AM - 10:00 PM</p>
+          <p>Sun: 10:00 AM - 8:00 PM</p>
+          <span class="footer-pill">Fast Delivery Available</span>
+        </section>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="site-footer-copy">All rights reserved to Chenath Perera.</p>
+      </div>
+    </div>
+  </footer>
 </div>

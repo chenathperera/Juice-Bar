@@ -1,16 +1,25 @@
-<nav class="navbar">
-  <a class="brand" routerLink="/">{{ title }}</a>
+<nav *ngIf="showDefaultNav" class="default-navbar">
+  <a class="default-brand" routerLink="/">{{ title }}</a>
 
-  <div class="nav-links">
+  <div class="default-links">
     <a routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+    <a routerLink="/products" routerLinkActive="active-link">Products</a>
+    <a routerLink="/cart" routerLinkActive="active-link">Cart</a>
+    <a routerLink="/track-order" routerLinkActive="active-link">Track Order</a>
     <a *ngIf="!isLoggedIn" routerLink="/login" routerLinkActive="active-link">Login</a>
     <a *ngIf="!isLoggedIn" routerLink="/register" routerLinkActive="active-link">Register</a>
     <button *ngIf="isLoggedIn" type="button" class="logout-button" (click)="logout()">Logout</button>
-    <a *ngIf="!isAdmin" routerLink="/menu" routerLinkActive="active-link">Menu</a>
-    <a *ngIf="!isAdmin" routerLink="/track-order" routerLinkActive="active-link">Track Order</a>
-    <a *ngIf="isAdmin" routerLink="/admin/juices" routerLinkActive="active-link">Admin Juices</a>
-    <a *ngIf="isAdmin" routerLink="/admin/categories" routerLinkActive="active-link">Admin Categories</a>
-    <a *ngIf="isAdmin" routerLink="/admin/orders" routerLinkActive="active-link">Admin Orders</a>
+  </div>
+</nav>
+
+<nav *ngIf="showAdminNav" class="admin-navbar">
+  <a class="admin-brand" routerLink="/admin/orders">FreshSip Admin</a>
+
+  <div class="admin-links">
+    <a routerLink="/admin/juices" routerLinkActive="active-link">Juices</a>
+    <a routerLink="/admin/categories" routerLinkActive="active-link">Categories</a>
+    <a routerLink="/admin/orders" routerLinkActive="active-link">Orders</a>
+    <button type="button" class="admin-logout-button" (click)="logout()">Logout</button>
   </div>
 </nav>
 
