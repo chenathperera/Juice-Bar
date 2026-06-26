@@ -1,58 +1,178 @@
-<section class="track-order-page">
-  <div class="page-header">
-    <p class="eyebrow">FreshSip Order Tracking</p>
-    <h1>Track Your Order</h1>
-    <p>Enter your order id to see the latest order status and ordered items.</p>
-  </div>
+<div class="shop-app">
+  <section class="shop-page track-order-page" id="trackOrderPage">
+    <img class="shop-bg-shape shop-bg-top" src="assets/blue shape 1.svg" alt="">
+    <img class="shop-bg-shape shop-bg-bottom" src="assets/blue shape 2.svg" alt="">
 
-  <div class="track-card">
-    <form #trackForm="ngForm" (ngSubmit)="trackOrder(trackForm)" novalidate class="track-form">
-      <div class="form-group">
-        <label for="orderId">Order Id</label>
-        <input
-          id="orderId"
-          name="orderId"
-          type="number"
-          min="1"
-          [(ngModel)]="orderId"
-          #orderIdInput="ngModel"
-          required
-        />
-        <p *ngIf="orderIdInput.invalid && orderIdInput.touched" class="validation-message">
-          Order id is required.
+    <header class="shop-header">
+      <a class="shop-logo-link" routerLink="/" aria-label="Juice World home">
+        <img class="shop-logo" src="assets/logo.svg" alt="Juice World logo">
+        <span class="shop-logo-copy">
+          <strong>JUICE WORLD</strong>
+          <small>FRESH, NATURAL, TASTY.</small>
+        </span>
+      </a>
+
+      <nav class="shop-nav track-nav" aria-label="Track order navigation">
+        <a routerLink="/">Home</a>
+        <a routerLink="/products">Products</a>
+        <a routerLink="/track-order" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }">Track Order</a>
+        <a routerLink="/" fragment="siteFooter">Contact</a>
+      </nav>
+
+      <div class="track-header-actions" aria-label="Quick actions">
+        <button class="shop-cart-btn" type="button" routerLink="/cart" aria-label="View cart">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="9" cy="20" r="1.5"></circle>
+            <circle cx="18" cy="20" r="1.5"></circle>
+            <path d="M2 3h3l2.3 10.2a1 1 0 0 0 1 .8h8.9a1 1 0 0 0 1-.7L21 7H6.2"></path>
+          </svg>
+          <span class="shop-cart-badge">{{ cartCount }}</span>
+        </button>
+        <app-account-menu />
+      </div>
+    </header>
+
+    <div class="shop-shell track-order-shell">
+      <div class="track-hero">
+        <p class="track-eyebrow">Juice World Tracking</p>
+        <h1>Track Your Order</h1>
+        <p class="track-intro">
+          Check your latest order progress, view the ordered items, and stay updated from preparation to pickup.
         </p>
       </div>
 
-      <button type="submit" class="primary-button" [disabled]="isLoading">
-        {{ isLoading ? 'Searching...' : 'Track Order' }}
-      </button>
-    </form>
+      <div class="track-search-card">
+        <div class="track-search-copy">
+          <span class="track-search-kicker">Order Lookup</span>
+          <h2>Enter your order number</h2>
+          <p>Use the order id you received after checkout to view the latest status and item details.</p>
+        </div>
 
-    <p *ngIf="isLoading" class="message">Loading order details...</p>
-    <p *ngIf="errorMessage" class="message error">{{ errorMessage }}</p>
+        <form #trackForm="ngForm" (ngSubmit)="trackOrder(trackForm)" novalidate class="track-form">
+          <div class="track-input-group">
+            <label for="orderId">Order Id</label>
+            <div class="track-input-shell">
+              <span class="track-input-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <rect x="4" y="5" width="16" height="14" rx="3"></rect>
+                  <path d="M8 9h8"></path>
+                  <path d="M8 13h5"></path>
+                </svg>
+              </span>
+              <input
+                id="orderId"
+                name="orderId"
+                type="number"
+                min="1"
+                [(ngModel)]="orderId"
+                #orderIdInput="ngModel"
+                required
+                placeholder="Example: 1024"
+              />
+            </div>
+            <p *ngIf="orderIdInput.invalid && orderIdInput.touched" class="validation-message">
+              Order id is required.
+            </p>
+          </div>
 
-    <div *ngIf="order && !isLoading" class="order-result">
-      <div class="order-top-row">
-        <h2>Order #{{ order.id }}</h2>
-        <span class="status-badge">{{ order.status }}</span>
+          <button type="submit" class="track-submit-button" [disabled]="isLoading">
+            {{ isLoading ? 'Searching...' : 'Track Order' }}
+          </button>
+        </form>
+
+        <p *ngIf="isLoading" class="track-message">Loading order details...</p>
+        <p *ngIf="errorMessage" class="track-message track-error">{{ errorMessage }}</p>
       </div>
 
-      <p class="detail"><strong>Customer name:</strong> {{ order.customerName }}</p>
-      <p class="detail"><strong>Order date:</strong> {{ order.orderDate | date: 'medium' }}</p>
-      <p class="detail"><strong>Status:</strong> {{ order.status }}</p>
-      <p class="detail"><strong>Total amount:</strong> ${{ order.totalAmount.toFixed(2) }}</p>
+      <div *ngIf="order && !isLoading" class="order-dashboard">
+        <section class="order-summary-card">
+          <div class="order-summary-top">
+            <div>
+              <p class="summary-label">Order</p>
+              <h2>#{{ order.id }}</h2>
+            </div>
 
-      <div class="items-section">
-        <h3>Order Items</h3>
+            <span class="status-pill" [ngClass]="getStatusClass(order.status)">
+              {{ order.status }}
+            </span>
+          </div>
 
-        <div *ngFor="let item of order.items" class="item-card">
-          <p class="item-detail"><strong>Juice name:</strong> {{ item.juiceName }}</p>
-          <p class="item-detail"><strong>Quantity:</strong> {{ item.quantity }}</p>
-          <p class="item-detail"><strong>Subtotal:</strong> ${{ item.subtotal.toFixed(2) }}</p>
-        </div>
+          <div class="status-progress">
+            <div
+              *ngFor="let step of statusSteps"
+              class="status-step"
+              [class.is-active]="isStepActive(step, order.status)"
+              [class.is-current]="isStepCurrent(step, order.status)"
+            >
+              <span class="status-step-dot"></span>
+              <span class="status-step-label">{{ step }}</span>
+            </div>
+          </div>
+
+          <div class="order-summary-grid">
+            <article class="summary-stat">
+              <span class="summary-stat-label">Customer</span>
+              <strong>{{ order.customerName }}</strong>
+              <p>{{ order.customerPhone }}</p>
+            </article>
+
+            <article class="summary-stat">
+              <span class="summary-stat-label">Placed On</span>
+              <strong>{{ order.orderDate | date: 'mediumDate' }}</strong>
+              <p>{{ order.orderDate | date: 'shortTime' }}</p>
+            </article>
+
+            <article class="summary-stat">
+              <span class="summary-stat-label">Items</span>
+              <strong>{{ order.items.length }}</strong>
+              <p>Juices in this order</p>
+            </article>
+
+            <article class="summary-stat total-stat">
+              <span class="summary-stat-label">Total Amount</span>
+              <strong>{{ formatCurrency(order.totalAmount) }}</strong>
+              <p>Order total</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="order-items-section">
+          <div class="order-items-heading">
+            <h3>Ordered Items</h3>
+            <p>Your selected juices and quantity details.</p>
+          </div>
+
+          <div class="order-items-grid">
+            <article *ngFor="let item of order.items" class="order-item-card">
+              <div class="order-item-top">
+                <span class="item-chip">Juice Item</span>
+                <strong>{{ formatCurrency(item.subtotal) }}</strong>
+              </div>
+
+              <h4>{{ item.juiceName }}</h4>
+
+              <div class="order-item-meta">
+                <div>
+                  <span>Quantity</span>
+                  <strong>{{ item.quantity }}</strong>
+                </div>
+
+                <div>
+                  <span>Unit Price</span>
+                  <strong>{{ formatCurrency(item.unitPrice) }}</strong>
+                </div>
+
+                <div>
+                  <span>Subtotal</span>
+                  <strong>{{ formatCurrency(item.subtotal) }}</strong>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+</div>
 
 <app-site-footer />

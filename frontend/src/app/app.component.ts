@@ -30,7 +30,10 @@ export class AppComponent {
   }
 
   get isImmersiveRoute(): boolean {
-    return this.currentPath === '/' || this.currentPath.startsWith('/products') || this.currentPath.startsWith('/cart');
+    return this.currentPath === '/'
+      || this.currentPath.startsWith('/products')
+      || this.currentPath.startsWith('/cart')
+      || this.currentPath.startsWith('/track-order');
   }
 
   get showDefaultNav(): boolean {
