@@ -195,17 +195,18 @@ input {
   width: min(28vw, 28rem);
 }
 
-.navbar,
-.hero-body {
-  position: relative;
-  z-index: 2;
-}
-
 .navbar {
+  position: relative;
+  z-index: 5;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
+}
+
+.hero-body {
+  position: relative;
+  z-index: 2;
 }
 
 .brand {
@@ -255,6 +256,8 @@ input {
 }
 
 .nav-icons {
+  position: relative;
+  z-index: 6;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -886,15 +889,9 @@ input {
   width: min(40vw, 32rem);
 }
 
-.shop-header,
-.shop-shell,
-.basket-bar,
-.product-modal-backdrop {
-  position: relative;
-  z-index: 1;
-}
-
 .shop-header {
+  position: relative;
+  z-index: 5;
   width: min(1240px, calc(100% - 48px));
   margin: 0 auto;
   padding: 22px 0 16px;
@@ -902,6 +899,13 @@ input {
   align-items: center;
   justify-content: space-between;
   gap: 24px;
+}
+
+.shop-shell,
+.basket-bar,
+.product-modal-backdrop {
+  position: relative;
+  z-index: 1;
 }
 
 .shop-logo {

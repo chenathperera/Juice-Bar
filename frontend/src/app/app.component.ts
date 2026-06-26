@@ -26,11 +26,11 @@ export class AppComponent {
   }
 
   get isAdminRoute(): boolean {
-    return this.router.url.startsWith('/admin');
+    return this.currentPath.startsWith('/admin');
   }
 
   get isImmersiveRoute(): boolean {
-    return this.router.url === '/' || this.router.url.startsWith('/products') || this.router.url.startsWith('/cart');
+    return this.currentPath === '/' || this.currentPath.startsWith('/products') || this.currentPath.startsWith('/cart');
   }
 
   get showDefaultNav(): boolean {
@@ -43,5 +43,9 @@ export class AppComponent {
 
   logout(): void {
     this.authService.logout();
+  }
+
+  private get currentPath(): string {
+    return this.router.url.split('#')[0].split('?')[0] || '/';
   }
 }

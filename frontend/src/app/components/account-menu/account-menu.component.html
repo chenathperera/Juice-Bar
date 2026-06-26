@@ -7,10 +7,10 @@
   </button>
 
   <div *ngIf="isOpen" class="account-dropdown">
-    <a *ngIf="!isLoggedIn" routerLink="/login" (click)="closeMenu()">Login</a>
-    <a *ngIf="!isLoggedIn" routerLink="/register" (click)="closeMenu()">Register</a>
-    <a *ngIf="isLoggedIn" routerLink="/profile" (click)="closeMenu()">My Profile</a>
-    <a routerLink="/track-order" (click)="closeMenu()">Track Order</a>
+    <button *ngIf="!isLoggedIn" type="button" (click)="navigateTo('/login')">Login</button>
+    <button *ngIf="!isLoggedIn" type="button" (click)="navigateTo('/register')">Register</button>
+    <button *ngIf="isLoggedIn" type="button" (click)="navigateTo('/profile')">My Profile</button>
+    <button type="button" (click)="navigateTo('/track-order')">Track Order</button>
     <button *ngIf="isLoggedIn" type="button" (click)="logout()">Logout</button>
   </div>
 </div>
