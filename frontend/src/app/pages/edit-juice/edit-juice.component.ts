@@ -27,6 +27,8 @@ export class EditJuiceComponent implements OnInit {
     description: '',
     price: null as number | null,
     imageUrl: '',
+    isMostLiked: false,
+    likeRate: '',
     categoryId: null as number | null,
     isAvailable: true
   };
@@ -68,6 +70,8 @@ export class EditJuiceComponent implements OnInit {
       description: this.juiceFormData.description || null,
       price: this.juiceFormData.price,
       imageUrl: this.juiceFormData.imageUrl || null,
+      isMostLiked: this.juiceFormData.isMostLiked,
+      likeRate: this.juiceFormData.likeRate || null,
       categoryId: this.juiceFormData.categoryId,
       categoryName: '',
       isAvailable: this.juiceFormData.isAvailable
@@ -104,6 +108,8 @@ export class EditJuiceComponent implements OnInit {
               description: juice.description || '',
               price: juice.price,
               imageUrl: juice.imageUrl || '',
+              isMostLiked: juice.isMostLiked,
+              likeRate: juice.likeRate || '',
               categoryId: juice.categoryId,
               isAvailable: juice.isAvailable
             };

@@ -73,6 +73,17 @@
       </div>
 
       <div class="form-group">
+        <label for="likeRate">Like Rate (optional)</label>
+        <input
+          id="likeRate"
+          name="likeRate"
+          type="text"
+          [(ngModel)]="juiceFormData.likeRate"
+          placeholder="Example: 91% (64)"
+        />
+      </div>
+
+      <div class="form-group">
         <label for="categoryId">Category</label>
         <select
           id="categoryId"
@@ -89,6 +100,16 @@
         <p *ngIf="categoryId.invalid && categoryId.touched" class="validation-message">
           Category is required.
         </p>
+      </div>
+
+      <div class="checkbox-row">
+        <input
+          id="isMostLiked"
+          name="isMostLiked"
+          type="checkbox"
+          [(ngModel)]="juiceFormData.isMostLiked"
+        />
+        <label for="isMostLiked">Mark as most liked</label>
       </div>
 
       <div class="checkbox-row">

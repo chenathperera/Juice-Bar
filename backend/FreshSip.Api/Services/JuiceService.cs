@@ -91,6 +91,8 @@ public class JuiceService : IJuiceService
             Description = createJuiceDto.Description,
             Price = createJuiceDto.Price,
             ImageUrl = createJuiceDto.ImageUrl,
+            IsMostLiked = createJuiceDto.IsMostLiked,
+            LikeRate = createJuiceDto.LikeRate,
             CategoryId = category.Id,
             IsAvailable = createJuiceDto.IsAvailable
         };
@@ -119,6 +121,8 @@ public class JuiceService : IJuiceService
         existingJuice.Description = updateJuiceDto.Description;
         existingJuice.Price = updateJuiceDto.Price;
         existingJuice.ImageUrl = updateJuiceDto.ImageUrl;
+        existingJuice.IsMostLiked = updateJuiceDto.IsMostLiked;
+        existingJuice.LikeRate = updateJuiceDto.LikeRate;
         existingJuice.CategoryId = category.Id;
         existingJuice.Category = category;
         existingJuice.IsAvailable = updateJuiceDto.IsAvailable;
@@ -175,6 +179,8 @@ public class JuiceService : IJuiceService
             Description = juice.Description,
             Price = juice.Price,
             ImageUrl = juice.ImageUrl,
+            IsMostLiked = juice.IsMostLiked,
+            LikeRate = juice.LikeRate,
             CategoryId = juice.CategoryId,
             CategoryName = juice.Category.Name,
             IsAvailable = juice.IsAvailable

@@ -215,10 +215,10 @@ export class ProductsComponent implements OnInit, OnDestroy {
         categoryId: this.slugify(categoryName),
         name: juice.name,
         price: juice.price,
-        likes: this.buildLikeLabel(index),
+        likes: juice.likeRate?.trim() || this.buildLikeLabel(index),
         description: juice.description?.trim() || 'Freshly prepared signature item from Juice World.',
         image: visual.catalogImages[categoryIndex % visual.catalogImages.length],
-        liked: index % 3 === 0,
+        liked: juice.isMostLiked,
         isAvailable: juice.isAvailable
       };
     });

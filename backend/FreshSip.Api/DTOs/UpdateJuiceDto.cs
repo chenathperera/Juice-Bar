@@ -17,6 +17,11 @@ public class UpdateJuiceDto
     [MaxLength(500)]
     public string? ImageUrl { get; set; }
 
+    public bool IsMostLiked { get; set; }
+
+    [MaxLength(50)]
+    public string? LikeRate { get; set; }
+
     [Range(1, int.MaxValue)]
     public int CategoryId { get; set; }
 

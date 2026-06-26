@@ -12,6 +12,10 @@ public class JuiceDto
 
     public string? ImageUrl { get; set; }
 
+    public bool IsMostLiked { get; set; }
+
+    public string? LikeRate { get; set; }
+
     public int CategoryId { get; set; }
 
     public string CategoryName { get; set; } = string.Empty;

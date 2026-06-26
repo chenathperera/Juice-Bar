@@ -39,6 +39,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .Property(juice => juice.ImageUrl)
             .HasMaxLength(500);
 
+        modelBuilder.Entity<Juice>()
+            .Property(juice => juice.LikeRate)
+            .HasMaxLength(50);
+
         modelBuilder.Entity<Category>()
             .HasIndex(category => category.Name)
             .IsUnique();
