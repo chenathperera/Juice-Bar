@@ -99,7 +99,7 @@
 
       <div class="product-modal-copy checkout-copy">
         <h2>Checkout</h2>
-        <p class="modal-description">Enter customer details to place the order using the current backend API.</p>
+        <p class="modal-description">Enter customer details to continue to Stripe test checkout.</p>
 
         <div class="checkout-fields">
           <input type="text" [(ngModel)]="customerName" placeholder="Customer name">
@@ -109,7 +109,7 @@
         <p *ngIf="checkoutError" class="checkout-message checkout-error">{{ checkoutError }}</p>
 
         <button class="modal-add-btn" type="button" [disabled]="isPlacingOrder" (click)="placeOrder()">
-          {{ isPlacingOrder ? 'Placing order...' : 'Place Order' }}
+          {{ isPlacingOrder ? 'Redirecting to payment...' : 'Continue to Payment' }}
         </button>
       </div>
     </div>

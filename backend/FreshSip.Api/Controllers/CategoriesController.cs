@@ -36,36 +36,57 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<CategoryDto>> CreateCategory(CreateCategoryDto createCategoryDto)
+    public async Task<ActionResult<CategoryDto>> CreateCategory([FromForm] CreateCategoryDto createCategoryDto)
     {
-        var createdCategory = await _categoryService.CreateAsync(createCategoryDto);
+        try
+        {
+            var createdCategory = await _categoryService.CreateAsync(createCategoryDto);
 
-        return CreatedAtAction(nameof(GetCategory), new { id = createdCategory.Id }, createdCategory);
+            return CreatedAtAction(nameof(GetCategory), new { id = createdCategory.Id }, createdCategory);
+        }
+        catch (InvalidOperationException exception)
+        {
+            return BadRequest(new { message = exception.Message });
+        }
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateCategory(int id, UpdateCategoryDto updateCategoryDto)
+    public async Task<IActionResult> UpdateCategory(int id, [FromForm] UpdateCategoryDto updateCategoryDto)
     {
-        var wasUpdated = await _categoryService.UpdateAsync(id, updateCategoryDto);
-
-        if (!wasUpdated)
+        try
         {
-            return NotFound();
-        }
+            var wasUpdated = await _categoryService.UpdateAsync(id, updateCategoryDto);
 
-        return NoContent();
+            if (!wasUpdated)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
+        }
+        catch (InvalidOperationException exception)
+        {
+            return BadRequest(new { message = exception.Message });
+        }
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteCategory(int id)
     {
-        var wasDeleted = await _categoryService.DeleteAsync(id);
-
-        if (!wasDeleted)
+        try
         {
-            return NotFound();
-        }
+            var wasDeleted = await _categoryService.DeleteAsync(id);
 
-        return NoContent();
+            if (!wasDeleted)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
+        }
+        catch (InvalidOperationException exception)
+        {
+            return BadRequest(new { message = exception.Message });
+        }
     }
 }

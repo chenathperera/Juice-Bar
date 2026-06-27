@@ -1,0 +1,10 @@
+<section class="payment-status-page">
+  <div class="payment-status-card">
+    <h1>Payment Success</h1>
+    <p *ngIf="isLoading">Verifying your payment and preparing your order details...</p>
+    <p *ngIf="errorMessage" class="payment-error">{{ errorMessage }}</p>
+    <a *ngIf="errorMessage" routerLink="/track-order" class="payment-link">Go to Track Order</a>
+  </div>
+</section>
+
+<app-site-footer />

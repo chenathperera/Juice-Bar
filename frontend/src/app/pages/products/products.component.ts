@@ -11,9 +11,12 @@ import {
   DesignCategoryVisual,
   FallbackCatalogItem
 } from '../../data/storefront-data';
+import { Category } from '../../models/category.model';
 import { Juice } from '../../models/juice.model';
+import { CategoryService } from '../../services/category.service';
 import { CartStoreService } from '../../services/cart-store.service';
 import { JuiceService } from '../../services/juice.service';
+import { resolveMediaUrl } from '../../utils/media-url';
 
 interface StorefrontCategory {
   id: string;
@@ -51,10 +54,12 @@ export class ProductsComponent implements OnInit, OnDestroy {
   modalItem: StorefrontProduct | null = null;
   modalQty = 1;
   cartCount = 0;
+  private categoryDetails: Category[] = [];
 
   private readonly subscriptions = new Subscription();
 
   constructor(
+    private categoryService: CategoryService,
     private juiceService: JuiceService,
     private cartStore: CartStoreService,
     private router: Router
@@ -164,6 +169,19 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   private loadProducts(): void {
+    this.categoryService.getCategories().subscribe({
+      next: (categories) => {
+        this.categoryDetails = categories;
+        this.loadJuices();
+      },
+      error: () => {
+        this.categoryDetails = [];
+        this.loadJuices();
+      }
+    });
+  }
+
+  private loadJuices(): void {
     this.juiceService.getJuices({
       sortBy: 'name',
       sortDirection: 'asc',
@@ -185,27 +203,31 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   private buildCatalogFromApi(juices: Juice[]): void {
-    const categoryNames = Array.from(
-      new Set(juices.map((juice) => (juice.categoryName?.trim() || 'Menu')))
-    );
+    const categoryNames = Array.from(new Set(juices.map((juice) => juice.categoryName?.trim() || 'Menu')));
     const visualsByCategory = new Map<string, DesignCategoryVisual>();
+    const categoryById = new Map(this.categoryDetails.map((category) => [category.id, category]));
 
     categoryNames.forEach((categoryName, index) => {
       visualsByCategory.set(categoryName, DESIGN_CATEGORY_VISUALS[index % DESIGN_CATEGORY_VISUALS.length]);
     });
 
-    this.categories = categoryNames.map((categoryName) => {
-      const visual = visualsByCategory.get(categoryName)!;
+    const juiceCategoryIds = Array.from(new Set(juices.map((juice) => juice.categoryId)));
+
+    this.categories = juiceCategoryIds.map((categoryId, index) => {
+      const category = categoryById.get(categoryId);
+      const categoryName = category?.name?.trim() || juices.find((juice) => juice.categoryId === categoryId)?.categoryName?.trim() || 'Menu';
+      const visual = visualsByCategory.get(categoryName) ?? DESIGN_CATEGORY_VISUALS[index % DESIGN_CATEGORY_VISUALS.length];
+
       return {
-        id: this.slugify(categoryName),
+        id: categoryId.toString(),
         label: categoryName,
-        thumb: visual.thumb
+        thumb: resolveMediaUrl(category?.imageUrl) || visual.thumb
       };
     });
 
     this.catalogItems = juices.map((juice, index) => {
       const categoryName = juice.categoryName?.trim() || 'Menu';
-      const visual = visualsByCategory.get(categoryName)!;
+      const visual = visualsByCategory.get(categoryName) ?? DESIGN_CATEGORY_VISUALS[index % DESIGN_CATEGORY_VISUALS.length];
       const categoryIndex = juices
         .filter((item) => (item.categoryName?.trim() || 'Menu') === categoryName)
         .findIndex((item) => item.id === juice.id);
@@ -213,7 +235,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
       return {
         id: `juice-${juice.id}`,
         juiceId: juice.id,
-        categoryId: this.slugify(categoryName),
+        categoryId: juice.categoryId.toString(),
         name: juice.name,
         price: juice.price,
         likes: juice.likeRate?.trim() || this.buildLikeLabel(index),
@@ -262,9 +284,5 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
       return this.sortDirection === 'desc' ? comparison * -1 : comparison;
     });
-  }
-
-  private slugify(value: string): string {
-    return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
   }
 }

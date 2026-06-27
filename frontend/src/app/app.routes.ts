@@ -13,6 +13,8 @@ import { TrackOrderComponent } from './pages/track-order/track-order.component';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { ProfileComponent } from './pages/profile/profile.component';
+import { PaymentSuccessComponent } from './pages/payment-success/payment-success.component';
+import { PaymentCancelComponent } from './pages/payment-cancel/payment-cancel.component';
 import { authGuard } from './auth.guard';
 
 export const routes: Routes = [
@@ -22,6 +24,8 @@ export const routes: Routes = [
   { path: 'profile', component: ProfileComponent },
   { path: 'products', component: ProductsComponent },
   { path: 'cart', component: CartComponent },
+  { path: 'payment-success', component: PaymentSuccessComponent },
+  { path: 'payment-cancel', component: PaymentCancelComponent },
   { path: 'menu', redirectTo: 'products', pathMatch: 'full' },
   { path: 'track-order', component: TrackOrderComponent },
   { path: 'admin/juices', component: JuiceListComponent, canActivate: [authGuard] },

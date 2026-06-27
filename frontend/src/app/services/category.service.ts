@@ -21,14 +21,28 @@ export class CategoryService {
   }
 
   createCategory(category: Category): Observable<Category> {
-    return this.http.post<Category>(this.apiUrl, category);
+    return this.http.post<Category>(this.apiUrl, this.buildCategoryFormData(category));
   }
 
   updateCategory(id: number, category: Category): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/${id}`, category);
+    return this.http.put<void>(`${this.apiUrl}/${id}`, this.buildCategoryFormData(category));
   }
 
   deleteCategory(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  private buildCategoryFormData(category: Category): FormData {
+    const formData = new FormData();
+
+    formData.append('name', category.name);
+    formData.append('description', category.description ?? '');
+    formData.append('imageUrl', category.imageUrl ?? '');
+
+    if (category.imageFile) {
+      formData.append('imageFile', category.imageFile);
+    }
+
+    return formData;
   }
 }

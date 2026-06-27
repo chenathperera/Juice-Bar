@@ -2,11 +2,11 @@ import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AccountMenuComponent } from '../../components/account-menu/account-menu.component';
 import { SiteFooterComponent } from '../../components/site-footer/site-footer.component';
-import { Order } from '../../models/order.model';
+import { Order, OrderItem } from '../../models/order.model';
 import { CartStoreService } from '../../services/cart-store.service';
 import { OrderService } from '../../services/order.service';
 
@@ -27,6 +27,7 @@ export class TrackOrderComponent implements OnInit, OnDestroy {
   private readonly subscriptions = new Subscription();
 
   constructor(
+    private route: ActivatedRoute,
     private orderService: OrderService,
     private cartStore: CartStoreService
   ) {}
@@ -37,6 +38,17 @@ export class TrackOrderComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.cartStore.basket$.subscribe(() => {
         this.cartCount = this.cartStore.getTotalCount();
+      })
+    );
+    this.subscriptions.add(
+      this.route.queryParamMap.subscribe((params) => {
+        const orderIdParam = params.get('orderId');
+        const orderId = Number(orderIdParam);
+
+        if (orderIdParam && !Number.isNaN(orderId) && orderId > 0) {
+          this.orderId = orderId;
+          this.loadOrder(orderId);
+        }
       })
     );
   }
@@ -51,11 +63,15 @@ export class TrackOrderComponent implements OnInit, OnDestroy {
       return;
     }
 
+    this.loadOrder(this.orderId);
+  }
+
+  private loadOrder(orderId: number): void {
     this.isLoading = true;
     this.errorMessage = '';
     this.order = null;
 
-    this.orderService.getOrderById(this.orderId).subscribe({
+    this.orderService.getOrderById(orderId).subscribe({
       next: (order) => {
         this.order = order;
         this.isLoading = false;
@@ -74,6 +90,10 @@ export class TrackOrderComponent implements OnInit, OnDestroy {
 
   formatCurrency(value: number): string {
     return `LKR ${value.toFixed(2)}`;
+  }
+
+  getOrderItemImage(item: OrderItem): string {
+    return item.imageUrl?.trim() || 'assets/chco item.png';
   }
 
   getStatusClass(status: string): string {

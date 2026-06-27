@@ -51,55 +51,57 @@ public class OrderService : IOrderService
 
     public async Task<OrderDto> CreateAsync(CreateOrderDto createOrderDto)
     {
-        var juiceIds = createOrderDto.Items
-            .Select(item => item.JuiceId)
-            .Distinct()
-            .ToList();
-
-        var juices = await _context.Juices
-            .Where(juice => juiceIds.Contains(juice.Id))
-            .ToListAsync();
-
-        if (juices.Count != juiceIds.Count)
-        {
-            throw new InvalidOperationException("One or more ordered juices do not exist.");
-        }
-
-        var juiceLookup = juices.ToDictionary(juice => juice.Id);
-
-        var order = new Order
-        {
-            CustomerName = createOrderDto.CustomerName.Trim(),
-            CustomerPhone = createOrderDto.CustomerPhone.Trim(),
-            OrderDate = DateTime.UtcNow,
-            Status = createOrderDto.Status.Trim()
-        };
-
-        foreach (var itemDto in createOrderDto.Items)
-        {
-            var juice = juiceLookup[itemDto.JuiceId];
-            var subtotal = juice.Price * itemDto.Quantity;
-
-            order.OrderItems.Add(new OrderItem
-            {
-                JuiceId = juice.Id,
-                Quantity = itemDto.Quantity,
-                UnitPrice = juice.Price,
-                Subtotal = subtotal
-            });
-        }
-
-        order.TotalAmount = order.OrderItems.Sum(item => item.Subtotal);
+        var order = await BuildOrderAsync(createOrderDto, "Unpaid");
 
         _context.Orders.Add(order);
         await _context.SaveChangesAsync();
 
-        var createdOrder = await _context.Orders
-            .Include(savedOrder => savedOrder.OrderItems)
-            .ThenInclude(savedOrderItem => savedOrderItem.Juice)
-            .FirstAsync(savedOrder => savedOrder.Id == order.Id);
-
+        var createdOrder = await LoadOrderAsync(order.Id);
         return MapToOrderDto(createdOrder);
+    }
+
+    public async Task<OrderDto> CreatePendingPaymentOrderAsync(CreateOrderDto createOrderDto)
+    {
+        var order = await BuildOrderAsync(createOrderDto, "Unpaid");
+
+        _context.Orders.Add(order);
+        await _context.SaveChangesAsync();
+
+        var createdOrder = await LoadOrderAsync(order.Id);
+        return MapToOrderDto(createdOrder);
+    }
+
+    public async Task<bool> SetStripeSessionIdAsync(int orderId, string sessionId)
+    {
+        var order = await _context.Orders.FindAsync(orderId);
+
+        if (order == null)
+        {
+            return false;
+        }
+
+        order.StripeSessionId = sessionId;
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
+
+    public async Task<OrderDto?> MarkPaymentAsPaidAsync(string sessionId)
+    {
+        var order = await _context.Orders
+            .Include(existingOrder => existingOrder.OrderItems)
+            .ThenInclude(existingOrderItem => existingOrderItem.Juice)
+            .FirstOrDefaultAsync(existingOrder => existingOrder.StripeSessionId == sessionId);
+
+        if (order == null)
+        {
+            return null;
+        }
+
+        order.PaymentStatus = "Paid";
+        await _context.SaveChangesAsync();
+
+        return MapToOrderDto(order);
     }
 
     public async Task<OrderDto?> UpdateStatusAsync(int id, UpdateOrderStatusDto updateOrderStatusDto)
@@ -125,6 +127,64 @@ public class OrderService : IOrderService
         return MapToOrderDto(order);
     }
 
+    private async Task<Order> BuildOrderAsync(CreateOrderDto createOrderDto, string paymentStatus)
+    {
+        var juiceIds = createOrderDto.Items
+            .Select(item => item.JuiceId)
+            .Distinct()
+            .ToList();
+
+        var juices = await _context.Juices
+            .Where(juice => juiceIds.Contains(juice.Id))
+            .ToListAsync();
+
+        if (juices.Count != juiceIds.Count)
+        {
+            throw new InvalidOperationException("One or more ordered juices do not exist.");
+        }
+
+        var juiceLookup = juices.ToDictionary(juice => juice.Id);
+        var createdAt = DateTime.UtcNow;
+
+        var order = new Order
+        {
+            CustomerName = createOrderDto.CustomerName.Trim(),
+            CustomerPhone = createOrderDto.CustomerPhone.Trim(),
+            CreatedAt = createdAt,
+            OrderDate = createdAt,
+            Status = createOrderDto.Status.Trim(),
+            PaymentStatus = paymentStatus
+        };
+
+        foreach (var itemDto in createOrderDto.Items)
+        {
+            var juice = juiceLookup[itemDto.JuiceId];
+            var subtotal = juice.Price * itemDto.Quantity;
+
+            order.OrderItems.Add(new OrderItem
+            {
+                JuiceId = juice.Id,
+                ProductName = juice.Name,
+                ImageUrl = juice.ImageUrl,
+                Quantity = itemDto.Quantity,
+                UnitPrice = juice.Price,
+                Subtotal = subtotal
+            });
+        }
+
+        order.TotalAmount = order.OrderItems.Sum(item => item.Subtotal);
+
+        return order;
+    }
+
+    private async Task<Order> LoadOrderAsync(int orderId)
+    {
+        return await _context.Orders
+            .Include(savedOrder => savedOrder.OrderItems)
+            .ThenInclude(savedOrderItem => savedOrderItem.Juice)
+            .FirstAsync(savedOrder => savedOrder.Id == orderId);
+    }
+
     private static bool TryGetValidStatus(string status, out string validStatus)
     {
         return AllowedStatuses.TryGetValue(status.Trim(), out validStatus!);
@@ -138,14 +198,17 @@ public class OrderService : IOrderService
             CustomerName = order.CustomerName,
             CustomerPhone = order.CustomerPhone,
             OrderDate = order.OrderDate,
+            CreatedAt = order.CreatedAt,
             TotalAmount = order.TotalAmount,
             Status = order.Status,
+            PaymentStatus = order.PaymentStatus,
             Items = order.OrderItems
                 .Select(orderItem => new OrderItemDto
                 {
                     Id = orderItem.Id,
                     JuiceId = orderItem.JuiceId,
-                    JuiceName = orderItem.Juice.Name,
+                    JuiceName = orderItem.ProductName,
+                    ImageUrl = orderItem.ImageUrl,
                     Quantity = orderItem.Quantity,
                     UnitPrice = orderItem.UnitPrice,
                     Subtotal = orderItem.Subtotal

@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Category } from '../../models/category.model';
 import { CategoryService } from '../../services/category.service';
+import { resolveMediaUrl } from '../../utils/media-url';
 
 @Component({
   selector: 'app-category-list',
@@ -52,10 +54,14 @@ export class CategoryListComponent implements OnInit {
         this.categories = this.categories.filter((item) => item.id !== category.id);
         this.deletingCategoryId = null;
       },
-      error: () => {
-        this.errorMessage = 'Unable to delete the category right now. Please try again.';
+      error: (error: HttpErrorResponse) => {
+        this.errorMessage = error.error?.message || 'Unable to delete the category right now. Please try again.';
         this.deletingCategoryId = null;
       }
     });
+  }
+
+  getCategoryImageUrl(category: Category): string {
+    return resolveMediaUrl(category.imageUrl);
   }
 }

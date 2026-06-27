@@ -13,5 +13,8 @@ public class Category
     [MaxLength(300)]
     public string? Description { get; set; }
 
+    [MaxLength(500)]
+    public string? ImageUrl { get; set; }
+
     public ICollection<Juice> Juices { get; set; } = new List<Juice>();
 }

@@ -292,7 +292,7 @@
 
 .order-summary-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 1rem;
   margin-top: 1.5rem;
 }
@@ -362,6 +362,15 @@
 
 .order-item-card {
   padding: 1.4rem;
+}
+
+.order-item-image {
+  width: 100%;
+  aspect-ratio: 1.35;
+  object-fit: cover;
+  display: block;
+  border-radius: 20px;
+  margin-bottom: 1rem;
 }
 
 .order-item-top {

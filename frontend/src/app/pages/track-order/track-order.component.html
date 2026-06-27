@@ -128,6 +128,12 @@
               <p>Juices in this order</p>
             </article>
 
+            <article class="summary-stat">
+              <span class="summary-stat-label">Payment Status</span>
+              <strong>{{ order.paymentStatus }}</strong>
+              <p>{{ order.paymentStatus === 'Paid' ? 'Stripe test payment completed' : 'Waiting for payment' }}</p>
+            </article>
+
             <article class="summary-stat total-stat">
               <span class="summary-stat-label">Total Amount</span>
               <strong>{{ formatCurrency(order.totalAmount) }}</strong>
@@ -144,6 +150,8 @@
 
           <div class="order-items-grid">
             <article *ngFor="let item of order.items" class="order-item-card">
+              <img class="order-item-image" [src]="getOrderItemImage(item)" [alt]="item.juiceName">
+
               <div class="order-item-top">
                 <span class="item-chip">Juice Item</span>
                 <strong>{{ formatCurrency(item.subtotal) }}</strong>

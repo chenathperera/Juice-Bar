@@ -8,6 +8,8 @@ public class OrderItemDto
 
     public string JuiceName { get; set; } = string.Empty;
 
+    public string? ImageUrl { get; set; }
+
     public int Quantity { get; set; }
 
     public decimal UnitPrice { get; set; }

@@ -12,6 +12,9 @@
   <div *ngIf="!isLoading && !errorMessage" class="category-grid">
     <article *ngFor="let category of categories" class="category-card">
       <div class="category-content">
+        <div *ngIf="category.imageUrl" class="category-image">
+          <img [src]="getCategoryImageUrl(category)" [alt]="category.name">
+        </div>
         <h2>{{ category.name }}</h2>
         <p class="description">
           {{ category.description || 'No description available yet.' }}

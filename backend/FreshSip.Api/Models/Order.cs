@@ -10,9 +10,15 @@ public class Order
 
     public DateTime OrderDate { get; set; }
 
+    public DateTime CreatedAt { get; set; }
+
     public decimal TotalAmount { get; set; }
 
     public string Status { get; set; } = string.Empty;
+
+    public string PaymentStatus { get; set; } = string.Empty;
+
+    public string? StripeSessionId { get; set; }
 
     public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 }

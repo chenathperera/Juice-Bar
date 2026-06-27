@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -6,10 +7,10 @@ import { Subscription } from 'rxjs';
 import { AccountMenuComponent } from '../../components/account-menu/account-menu.component';
 import { SiteFooterComponent } from '../../components/site-footer/site-footer.component';
 import { FALLBACK_CATALOG_ITEMS } from '../../data/storefront-data';
-import { CreateOrder } from '../../models/order.model';
+import { CreateCheckoutSessionRequest } from '../../models/order.model';
 import { CartStoreService } from '../../services/cart-store.service';
 import { JuiceService } from '../../services/juice.service';
-import { OrderService } from '../../services/order.service';
+import { PaymentService } from '../../services/payment.service';
 
 interface CartPageItem {
   id: string;
@@ -41,7 +42,7 @@ export class CartComponent implements OnInit, OnDestroy {
   constructor(
     private cartStore: CartStoreService,
     private juiceService: JuiceService,
-    private orderService: OrderService
+    private paymentService: PaymentService
   ) {}
 
   get grandTotal(): number {
@@ -97,30 +98,33 @@ export class CartComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const order: CreateOrder = {
+    const checkoutRequest: CreateCheckoutSessionRequest = {
       customerName: this.customerName.trim(),
       customerPhone: this.customerPhone.trim(),
-      status: 'Pending',
       items: orderItems.map((item) => ({
         juiceId: item.juiceId as number,
         quantity: item.quantity
-      }))
+      })),
+      successUrl: `${window.location.origin}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancelUrl: `${window.location.origin}/payment-cancel`
     };
 
     this.isPlacingOrder = true;
     this.checkoutError = '';
 
-    this.orderService.createOrder(order).subscribe({
-      next: (createdOrder) => {
-        this.checkoutSuccess = `Order #${createdOrder.id} created successfully.`;
+    this.paymentService.createCheckoutSession(checkoutRequest).subscribe({
+      next: (response) => {
         this.isPlacingOrder = false;
-        this.customerName = '';
-        this.customerPhone = '';
-        this.cartStore.clear();
-        this.isCheckoutOpen = false;
+
+        if (!response.sessionUrl) {
+          this.checkoutError = 'Unable to start Stripe checkout right now.';
+          return;
+        }
+
+        window.location.href = response.sessionUrl;
       },
-      error: () => {
-        this.checkoutError = 'Unable to place the order right now.';
+      error: (error: HttpErrorResponse) => {
+        this.checkoutError = error.error?.message || 'Unable to start the payment right now.';
         this.isPlacingOrder = false;
       }
     });

@@ -1,9 +1,11 @@
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Category } from '../../models/category.model';
 import { CategoryService } from '../../services/category.service';
+import { resolveMediaUrl } from '../../utils/media-url';
 
 @Component({
   selector: 'app-edit-category',
@@ -16,10 +18,13 @@ export class EditCategoryComponent implements OnInit {
   isLoading = true;
   isSaving = false;
   errorMessage = '';
+  previewImageUrl = '';
 
   categoryFormData = {
     name: '',
-    description: ''
+    description: '',
+    imageUrl: '',
+    imageFile: null as File | null
   };
 
   constructor(
@@ -54,15 +59,17 @@ export class EditCategoryComponent implements OnInit {
     const updatedCategory: Category = {
       id: this.categoryId,
       name: this.categoryFormData.name,
-      description: this.categoryFormData.description || null
+      description: this.categoryFormData.description || null,
+      imageUrl: this.categoryFormData.imageUrl || null,
+      imageFile: this.categoryFormData.imageFile
     };
 
     this.categoryService.updateCategory(this.categoryId, updatedCategory).subscribe({
       next: () => {
         this.router.navigate(['/admin/categories']);
       },
-      error: () => {
-        this.errorMessage = 'Unable to update the category right now. Please try again.';
+      error: (error: HttpErrorResponse) => {
+        this.errorMessage = error.error?.message || 'Unable to update the category right now. Please try again.';
         this.isSaving = false;
       }
     });
@@ -75,8 +82,11 @@ export class EditCategoryComponent implements OnInit {
       next: (category) => {
         this.categoryFormData = {
           name: category.name,
-          description: category.description || ''
+          description: category.description || '',
+          imageUrl: category.imageUrl || '',
+          imageFile: null
         };
+        this.previewImageUrl = resolveMediaUrl(category.imageUrl);
         this.isLoading = false;
       },
       error: () => {
@@ -84,5 +94,28 @@ export class EditCategoryComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  onImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.revokePreviewUrl();
+    this.categoryFormData.imageFile = input.files?.[0] ?? null;
+
+    if (this.categoryFormData.imageFile) {
+      this.previewImageUrl = URL.createObjectURL(this.categoryFormData.imageFile);
+      return;
+    }
+
+    this.previewImageUrl = resolveMediaUrl(this.categoryFormData.imageUrl);
+  }
+
+  get selectedImageName(): string {
+    return this.categoryFormData.imageFile?.name || 'No new file selected';
+  }
+
+  private revokePreviewUrl(): void {
+    if (this.previewImageUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(this.previewImageUrl);
+    }
   }
 }

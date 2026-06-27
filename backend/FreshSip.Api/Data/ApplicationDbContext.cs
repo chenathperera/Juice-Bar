@@ -47,6 +47,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .HasIndex(category => category.Name)
             .IsUnique();
 
+        modelBuilder.Entity<Category>()
+            .Property(category => category.ImageUrl)
+            .HasMaxLength(500);
+
         modelBuilder.Entity<Juice>()
             .HasOne(juice => juice.Category)
             .WithMany(category => category.Juices)
@@ -65,8 +69,24 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .HasMaxLength(50);
 
         modelBuilder.Entity<Order>()
+            .Property(order => order.PaymentStatus)
+            .HasMaxLength(50);
+
+        modelBuilder.Entity<Order>()
+            .Property(order => order.StripeSessionId)
+            .HasMaxLength(200);
+
+        modelBuilder.Entity<Order>()
             .Property(order => order.TotalAmount)
             .HasPrecision(10, 2);
+
+        modelBuilder.Entity<OrderItem>()
+            .Property(orderItem => orderItem.ProductName)
+            .HasMaxLength(100);
+
+        modelBuilder.Entity<OrderItem>()
+            .Property(orderItem => orderItem.ImageUrl)
+            .HasMaxLength(500);
 
         modelBuilder.Entity<OrderItem>()
             .Property(orderItem => orderItem.UnitPrice)
