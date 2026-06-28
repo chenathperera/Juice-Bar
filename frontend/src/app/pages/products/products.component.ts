@@ -110,7 +110,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   selectCategory(categoryId: string): void {
-    this.selectedCategoryId = categoryId;
+    this.selectedCategoryId = this.selectedCategoryId === categoryId ? '' : categoryId;
   }
 
   clearFilters(): void {
@@ -211,19 +211,29 @@ export class ProductsComponent implements OnInit, OnDestroy {
       visualsByCategory.set(categoryName, DESIGN_CATEGORY_VISUALS[index % DESIGN_CATEGORY_VISUALS.length]);
     });
 
-    const juiceCategoryIds = Array.from(new Set(juices.map((juice) => juice.categoryId)));
+    const categorySource = this.categoryDetails.length > 0
+      ? this.categoryDetails.map((category) => ({
+          id: category.id,
+          name: category.name?.trim() || 'Menu',
+          imageUrl: category.imageUrl
+        }))
+      : Array.from(new Set(juices.map((juice) => juice.categoryId))).map((categoryId) => ({
+          id: categoryId,
+          name: juices.find((juice) => juice.categoryId === categoryId)?.categoryName?.trim() || 'Menu',
+          imageUrl: null
+        }));
 
-    this.categories = juiceCategoryIds.map((categoryId, index) => {
-      const category = categoryById.get(categoryId);
-      const categoryName = category?.name?.trim() || juices.find((juice) => juice.categoryId === categoryId)?.categoryName?.trim() || 'Menu';
-      const visual = visualsByCategory.get(categoryName) ?? DESIGN_CATEGORY_VISUALS[index % DESIGN_CATEGORY_VISUALS.length];
+    this.categories = categorySource
+      .filter((category) => !this.isHiddenCategory(category.name))
+      .map((category, index) => {
+      const visual = visualsByCategory.get(category.name) ?? DESIGN_CATEGORY_VISUALS[index % DESIGN_CATEGORY_VISUALS.length];
 
       return {
-        id: categoryId.toString(),
-        label: categoryName,
-        thumb: resolveMediaUrl(category?.imageUrl) || visual.thumb
+        id: category.id.toString(),
+        label: category.name,
+        thumb: resolveMediaUrl(category.imageUrl) || visual.thumb
       };
-    });
+      });
 
     this.catalogItems = juices.map((juice, index) => {
       const categoryName = juice.categoryName?.trim() || 'Menu';
@@ -240,13 +250,15 @@ export class ProductsComponent implements OnInit, OnDestroy {
         price: juice.price,
         likes: juice.likeRate?.trim() || this.buildLikeLabel(index),
         description: juice.description?.trim() || 'Freshly prepared signature item from Juice World.',
-        image: visual.catalogImages[categoryIndex % visual.catalogImages.length],
+        image: resolveMediaUrl(juice.imageUrl) || visual.catalogImages[categoryIndex % visual.catalogImages.length],
         liked: juice.isMostLiked,
         isAvailable: juice.isAvailable
       };
     });
 
-    this.selectedCategoryId = this.categories[0]?.id ?? '';
+    if (this.selectedCategoryId && !this.categories.some((category) => category.id === this.selectedCategoryId)) {
+      this.selectedCategoryId = '';
+    }
   }
 
   private useFallbackCatalog(): void {
@@ -261,13 +273,17 @@ export class ProductsComponent implements OnInit, OnDestroy {
       juiceId: null,
       isAvailable: index % 5 !== 0
     }));
-    this.selectedCategoryId = this.categories[0]?.id ?? '';
+    this.selectedCategoryId = '';
   }
 
   private buildLikeLabel(index: number): string {
     const percent = 88 + (index % 6);
     const count = 40 + index * 3;
     return `${percent}% (${count})`;
+  }
+
+  private isHiddenCategory(categoryName: string): boolean {
+    return categoryName.trim().toLowerCase() === 'uncategorized';
   }
 
   private sortItems(items: StorefrontProduct[]): StorefrontProduct[] {

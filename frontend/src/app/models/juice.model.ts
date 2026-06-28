@@ -4,6 +4,7 @@ export interface Juice {
   description?: string | null;
   price: number;
   imageUrl?: string | null;
+  imageFile?: File | null;
   isMostLiked: boolean;
   likeRate?: string | null;
   categoryId: number;

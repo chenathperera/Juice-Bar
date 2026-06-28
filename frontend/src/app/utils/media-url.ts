@@ -17,6 +17,14 @@ export function resolveMediaUrl(path: string | null | undefined): string {
       return `${backendBaseUrl}${trimmedPath}`;
     }
 
+    if (environment.backendUrl) {
+      return `${environment.backendUrl}${trimmedPath}`;
+    }
+
+    if (typeof window !== 'undefined' && window.location.port === '4200') {
+      return `http://localhost:5199${trimmedPath}`;
+    }
+
     return trimmedPath;
   }
 

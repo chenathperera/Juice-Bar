@@ -20,12 +20,14 @@ export class AddJuiceComponent {
   isSaving = false;
   errorMessage = '';
   backendValidationErrors: string[] = [];
+  previewImageUrl = '';
 
   juiceFormData = {
     name: '',
     description: '',
     price: null as number | null,
     imageUrl: '',
+    imageFile: null as File | null,
     isMostLiked: false,
     likeRate: '',
     categoryId: null as number | null,
@@ -56,6 +58,7 @@ export class AddJuiceComponent {
       description: this.juiceFormData.description || null,
       price: this.juiceFormData.price,
       imageUrl: this.juiceFormData.imageUrl || null,
+      imageFile: this.juiceFormData.imageFile,
       isMostLiked: this.juiceFormData.isMostLiked,
       likeRate: this.juiceFormData.likeRate || null,
       categoryId: this.juiceFormData.categoryId,
@@ -89,6 +92,23 @@ export class AddJuiceComponent {
     return Object.values(errors).flat() as string[];
   }
 
+  onImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.revokePreviewUrl();
+    this.juiceFormData.imageFile = input.files?.[0] ?? null;
+
+    if (this.juiceFormData.imageFile) {
+      this.previewImageUrl = URL.createObjectURL(this.juiceFormData.imageFile);
+      return;
+    }
+
+    this.previewImageUrl = '';
+  }
+
+  get selectedImageName(): string {
+    return this.juiceFormData.imageFile?.name || 'No file selected';
+  }
+
   private loadCategories(): void {
     this.errorMessage = '';
 
@@ -102,5 +122,11 @@ export class AddJuiceComponent {
         this.isLoadingCategories = false;
       }
     });
+  }
+
+  private revokePreviewUrl(): void {
+    if (this.previewImageUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(this.previewImageUrl);
+    }
   }
 }

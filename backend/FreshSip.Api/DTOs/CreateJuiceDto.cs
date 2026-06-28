@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace FreshSip.Api.DTOs;
 
@@ -16,6 +17,8 @@ public class CreateJuiceDto
 
     [MaxLength(500)]
     public string? ImageUrl { get; set; }
+
+    public IFormFile? ImageFile { get; set; }
 
     public bool IsMostLiked { get; set; }
 

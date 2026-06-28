@@ -50,7 +50,7 @@ public class JuicesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<JuiceDto>> CreateJuice(CreateJuiceDto createJuiceDto)
+    public async Task<ActionResult<JuiceDto>> CreateJuice([FromForm] CreateJuiceDto createJuiceDto)
     {
         try
         {
@@ -58,14 +58,14 @@ public class JuicesController : ControllerBase
 
             return CreatedAtAction(nameof(GetJuice), new { id = createdJuice.Id }, createdJuice);
         }
-        catch (InvalidOperationException)
+        catch (InvalidOperationException exception)
         {
-            return BadRequest(new { message = "The selected category does not exist." });
+            return BadRequest(new { message = exception.Message });
         }
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateJuice(int id, UpdateJuiceDto updateJuiceDto)
+    public async Task<IActionResult> UpdateJuice(int id, [FromForm] UpdateJuiceDto updateJuiceDto)
     {
         try
         {
@@ -78,9 +78,9 @@ public class JuicesController : ControllerBase
 
             return NoContent();
         }
-        catch (InvalidOperationException)
+        catch (InvalidOperationException exception)
         {
-            return BadRequest(new { message = "The selected category does not exist." });
+            return BadRequest(new { message = exception.Message });
         }
     }
 

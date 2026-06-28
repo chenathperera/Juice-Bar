@@ -8,10 +8,12 @@ namespace FreshSip.Api.Services;
 public class JuiceService : IJuiceService
 {
     private readonly ApplicationDbContext _context;
+    private readonly IWebHostEnvironment _environment;
 
-    public JuiceService(ApplicationDbContext context)
+    public JuiceService(ApplicationDbContext context, IWebHostEnvironment environment)
     {
         _context = context;
+        _environment = environment;
     }
 
     public async Task<PagedResultDto<JuiceDto>> GetAllAsync(
@@ -90,7 +92,8 @@ public class JuiceService : IJuiceService
             Name = createJuiceDto.Name,
             Description = createJuiceDto.Description,
             Price = createJuiceDto.Price,
-            ImageUrl = createJuiceDto.ImageUrl,
+            ImageUrl = await SaveJuiceImageAsync(createJuiceDto.ImageFile)
+                ?? NormalizeImageUrl(createJuiceDto.ImageUrl),
             IsMostLiked = createJuiceDto.IsMostLiked,
             LikeRate = createJuiceDto.LikeRate,
             CategoryId = category.Id,
@@ -120,7 +123,18 @@ public class JuiceService : IJuiceService
         existingJuice.Name = updateJuiceDto.Name;
         existingJuice.Description = updateJuiceDto.Description;
         existingJuice.Price = updateJuiceDto.Price;
-        existingJuice.ImageUrl = updateJuiceDto.ImageUrl;
+        var newImagePath = await SaveJuiceImageAsync(updateJuiceDto.ImageFile);
+
+        if (!string.IsNullOrWhiteSpace(newImagePath))
+        {
+            DeleteLocalImage(existingJuice.ImageUrl);
+            existingJuice.ImageUrl = newImagePath;
+        }
+        else
+        {
+            existingJuice.ImageUrl = NormalizeImageUrl(updateJuiceDto.ImageUrl);
+        }
+
         existingJuice.IsMostLiked = updateJuiceDto.IsMostLiked;
         existingJuice.LikeRate = updateJuiceDto.LikeRate;
         existingJuice.CategoryId = category.Id;
@@ -185,5 +199,53 @@ public class JuiceService : IJuiceService
             CategoryName = juice.Category.Name,
             IsAvailable = juice.IsAvailable
         };
+    }
+
+    private async Task<string?> SaveJuiceImageAsync(IFormFile? imageFile)
+    {
+        if (imageFile == null || imageFile.Length == 0)
+        {
+            return null;
+        }
+
+        var extension = Path.GetExtension(imageFile.FileName).ToLowerInvariant();
+        var allowedExtensions = new[] { ".png", ".jpg", ".jpeg", ".webp" };
+
+        if (!allowedExtensions.Contains(extension))
+        {
+            throw new InvalidOperationException("Only PNG, JPG, JPEG, and WEBP image files are allowed.");
+        }
+
+        var uploadsFolder = Path.Combine(_environment.WebRootPath ?? "wwwroot", "uploads", "juices");
+        Directory.CreateDirectory(uploadsFolder);
+
+        var fileName = $"{Guid.NewGuid()}{extension}";
+        var filePath = Path.Combine(uploadsFolder, fileName);
+
+        await using var stream = new FileStream(filePath, FileMode.Create);
+        await imageFile.CopyToAsync(stream);
+
+        return $"/uploads/juices/{fileName}";
+    }
+
+    private static string? NormalizeImageUrl(string? imageUrl)
+    {
+        return string.IsNullOrWhiteSpace(imageUrl) ? null : imageUrl.Trim();
+    }
+
+    private void DeleteLocalImage(string? imageUrl)
+    {
+        if (string.IsNullOrWhiteSpace(imageUrl) || !imageUrl.StartsWith("/uploads/", StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        var relativePath = imageUrl.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
+        var filePath = Path.Combine(_environment.WebRootPath ?? "wwwroot", relativePath);
+
+        if (File.Exists(filePath))
+        {
+            File.Delete(filePath);
+        }
     }
 }

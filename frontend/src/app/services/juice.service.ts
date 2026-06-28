@@ -69,14 +69,33 @@ export class JuiceService {
   }
 
   createJuice(juice: Juice): Observable<Juice> {
-    return this.http.post<Juice>(this.apiUrl, juice);
+    return this.http.post<Juice>(this.apiUrl, this.buildJuiceFormData(juice));
   }
 
   updateJuice(id: number, juice: Juice): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/${id}`, juice);
+    return this.http.put<void>(`${this.apiUrl}/${id}`, this.buildJuiceFormData(juice));
   }
 
   deleteJuice(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  private buildJuiceFormData(juice: Juice): FormData {
+    const formData = new FormData();
+
+    formData.append('name', juice.name);
+    formData.append('description', juice.description ?? '');
+    formData.append('price', juice.price.toString());
+    formData.append('imageUrl', juice.imageUrl ?? '');
+    formData.append('isMostLiked', String(juice.isMostLiked));
+    formData.append('likeRate', juice.likeRate ?? '');
+    formData.append('categoryId', juice.categoryId.toString());
+    formData.append('isAvailable', String(juice.isAvailable));
+
+    if (juice.imageFile) {
+      formData.append('imageFile', juice.imageFile);
+    }
+
+    return formData;
   }
 }

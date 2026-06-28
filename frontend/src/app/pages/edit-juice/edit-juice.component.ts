@@ -7,6 +7,7 @@ import { Category } from '../../models/category.model';
 import { Juice } from '../../models/juice.model';
 import { CategoryService } from '../../services/category.service';
 import { JuiceService } from '../../services/juice.service';
+import { resolveMediaUrl } from '../../utils/media-url';
 
 @Component({
   selector: 'app-edit-juice',
@@ -21,12 +22,14 @@ export class EditJuiceComponent implements OnInit {
   isSaving = false;
   errorMessage = '';
   backendValidationErrors: string[] = [];
+  previewImageUrl = '';
 
   juiceFormData = {
     name: '',
     description: '',
     price: null as number | null,
     imageUrl: '',
+    imageFile: null as File | null,
     isMostLiked: false,
     likeRate: '',
     categoryId: null as number | null,
@@ -70,6 +73,7 @@ export class EditJuiceComponent implements OnInit {
       description: this.juiceFormData.description || null,
       price: this.juiceFormData.price,
       imageUrl: this.juiceFormData.imageUrl || null,
+      imageFile: this.juiceFormData.imageFile,
       isMostLiked: this.juiceFormData.isMostLiked,
       likeRate: this.juiceFormData.likeRate || null,
       categoryId: this.juiceFormData.categoryId,
@@ -108,11 +112,13 @@ export class EditJuiceComponent implements OnInit {
               description: juice.description || '',
               price: juice.price,
               imageUrl: juice.imageUrl || '',
+              imageFile: null,
               isMostLiked: juice.isMostLiked,
               likeRate: juice.likeRate || '',
               categoryId: juice.categoryId,
               isAvailable: juice.isAvailable
             };
+            this.previewImageUrl = resolveMediaUrl(juice.imageUrl);
             this.isLoading = false;
           },
           error: () => {
@@ -136,5 +142,28 @@ export class EditJuiceComponent implements OnInit {
     }
 
     return Object.values(errors).flat() as string[];
+  }
+
+  onImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.revokePreviewUrl();
+    this.juiceFormData.imageFile = input.files?.[0] ?? null;
+
+    if (this.juiceFormData.imageFile) {
+      this.previewImageUrl = URL.createObjectURL(this.juiceFormData.imageFile);
+      return;
+    }
+
+    this.previewImageUrl = resolveMediaUrl(this.juiceFormData.imageUrl);
+  }
+
+  get selectedImageName(): string {
+    return this.juiceFormData.imageFile?.name || 'No new file selected';
+  }
+
+  private revokePreviewUrl(): void {
+    if (this.previewImageUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(this.previewImageUrl);
+    }
   }
 }
